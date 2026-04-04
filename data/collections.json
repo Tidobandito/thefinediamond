@@ -1,0 +1,179 @@
+[
+  {
+    "slug": "wedding-engagement",
+    "name": "Wedding & Engagement",
+    "description": "Timeless symbols of love, crafted with the world's finest diamonds. Each piece designed to mark life's most meaningful moment.",
+    "image": "/images/collections/wedding-hero.jpg",
+    "products": [
+      {
+        "id": "we001",
+        "name": "The Classic Solitaire",
+        "description": "A round brilliant diamond set in a timeless six-prong platinum setting.",
+        "price": null,
+        "priceLabel": "Starting at $4,500",
+        "image": "/images/products/solitaire.jpg",
+        "collection": "wedding-engagement"
+      },
+      {
+        "id": "we002",
+        "name": "The Halo Embrace",
+        "description": "A cushion-cut center stone surrounded by a delicate halo of micro-pavé diamonds.",
+        "price": null,
+        "priceLabel": "Starting at $6,200",
+        "image": "/images/products/halo.jpg",
+        "collection": "wedding-engagement"
+      },
+      {
+        "id": "we003",
+        "name": "Three Stone Legacy",
+        "description": "Past, present, and future represented in three perfectly matched stones.",
+        "price": null,
+        "priceLabel": "Starting at $7,800",
+        "image": "/images/products/three-stone.jpg",
+        "collection": "wedding-engagement"
+      },
+      {
+        "id": "we004",
+        "name": "The Eternity Band",
+        "description": "A continuous circle of matched diamonds, symbolizing never-ending love.",
+        "price": null,
+        "priceLabel": "Starting at $3,200",
+        "image": "/images/products/eternity.jpg",
+        "collection": "wedding-engagement"
+      }
+    ]
+  },
+  {
+    "slug": "rings",
+    "name": "Rings",
+    "description": "From statement cocktail rings to everyday elegance, each piece showcases exceptional stones in masterful settings.",
+    "image": "/images/collections/rings-hero.jpg",
+    "products": [
+      {
+        "id": "r001",
+        "name": "The Sovereign",
+        "description": "A bold emerald-cut diamond flanked by tapered baguettes in 18k gold.",
+        "price": 12500,
+        "image": "/images/products/sovereign-ring.jpg",
+        "collection": "rings"
+      },
+      {
+        "id": "r002",
+        "name": "Constellation Band",
+        "description": "Scattered brilliant diamonds set flush in a wide platinum band.",
+        "price": 4800,
+        "image": "/images/products/constellation.jpg",
+        "collection": "rings"
+      },
+      {
+        "id": "r003",
+        "name": "The Pinnacle",
+        "description": "An architectural marvel — a tension-set round brilliant that appears to float.",
+        "price": 8900,
+        "image": "/images/products/pinnacle.jpg",
+        "collection": "rings"
+      }
+    ]
+  },
+  {
+    "slug": "earrings",
+    "name": "Earrings",
+    "description": "Diamonds that catch the light with every turn. Studs, drops, and chandeliers for every occasion.",
+    "image": "/images/collections/earrings-hero.jpg",
+    "products": [
+      {
+        "id": "e001",
+        "name": "Classic Diamond Studs",
+        "description": "Matched round brilliant diamonds in four-prong platinum settings.",
+        "price": null,
+        "priceLabel": "Starting at $2,400",
+        "image": "/images/products/studs.jpg",
+        "collection": "earrings"
+      },
+      {
+        "id": "e002",
+        "name": "The Cascade",
+        "description": "Graduated pear-shaped diamonds descending in a graceful line.",
+        "price": 9600,
+        "image": "/images/products/cascade.jpg",
+        "collection": "earrings"
+      },
+      {
+        "id": "e003",
+        "name": "Diamond Hoops",
+        "description": "Inside-out diamond hoops with over 3 carats of brilliant rounds.",
+        "price": 7200,
+        "image": "/images/products/hoops.jpg",
+        "collection": "earrings"
+      }
+    ]
+  },
+  {
+    "slug": "necklaces-pendants",
+    "name": "Necklaces & Pendants",
+    "description": "From delicate solitaire pendants to dramatic statement necklaces, diamonds that rest close to the heart.",
+    "image": "/images/collections/necklaces-hero.jpg",
+    "products": [
+      {
+        "id": "n001",
+        "name": "Solitaire Pendant",
+        "description": "A single brilliant diamond suspended on an 18k white gold chain.",
+        "price": null,
+        "priceLabel": "Starting at $1,800",
+        "image": "/images/products/solitaire-pendant.jpg",
+        "collection": "necklaces-pendants"
+      },
+      {
+        "id": "n002",
+        "name": "The Rivière",
+        "description": "Graduated round brilliants in a seamless platinum necklace.",
+        "price": 28500,
+        "image": "/images/products/riviere.jpg",
+        "collection": "necklaces-pendants"
+      },
+      {
+        "id": "n003",
+        "name": "Diamond Bar",
+        "description": "A modern horizontal bar set with princess-cut diamonds.",
+        "price": 3400,
+        "image": "/images/products/diamond-bar.jpg",
+        "collection": "necklaces-pendants"
+      }
+    ]
+  },
+  {
+    "slug": "custom-pieces",
+    "name": "Custom Pieces",
+    "description": "One-of-a-kind creations brought to life through our 3D CAD design process. Your vision, our craft.",
+    "image": "/images/collections/custom-hero.jpg",
+    "products": [
+      {
+        "id": "c001",
+        "name": "The Aurora Ring",
+        "description": "A custom-designed oval sapphire surrounded by a diamond halo, conceived in CAD.",
+        "price": null,
+        "priceLabel": "Custom pricing",
+        "image": "/images/products/aurora.jpg",
+        "collection": "custom-pieces"
+      },
+      {
+        "id": "c002",
+        "name": "Vintage Revival Pendant",
+        "description": "An Art Deco-inspired pendant recreated from a family heirloom sketch.",
+        "price": null,
+        "priceLabel": "Custom pricing",
+        "image": "/images/products/vintage-pendant.jpg",
+        "collection": "custom-pieces"
+      },
+      {
+        "id": "c003",
+        "name": "The Dynasty Set",
+        "description": "A matching engagement ring and wedding band designed as one unified piece.",
+        "price": null,
+        "priceLabel": "Custom pricing",
+        "image": "/images/products/dynasty.jpg",
+        "collection": "custom-pieces"
+      }
+    ]
+  }
+]

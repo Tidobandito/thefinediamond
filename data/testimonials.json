@@ -1,0 +1,42 @@
+[
+  {
+    "id": "t001",
+    "quote": "The 3D CAD process was incredible. We could see exactly what the ring would look like from every angle before it was made. The final piece was even more beautiful than the renders.",
+    "author": "Sarah & Michael",
+    "location": "Birmingham, AL",
+    "rating": 5,
+    "product": "Custom Engagement Ring"
+  },
+  {
+    "id": "t002",
+    "quote": "Buying direct made all the difference. We got a significantly larger stone than what we could afford at traditional retailers — same quality, certified by GIA.",
+    "author": "James T.",
+    "location": "Nashville, TN",
+    "rating": 5,
+    "product": "2.1ct Round Brilliant"
+  },
+  {
+    "id": "t003",
+    "quote": "From the first consultation to the final reveal, every step was transparent and personal. This is how buying a diamond should feel.",
+    "author": "Emily R.",
+    "location": "Atlanta, GA",
+    "rating": 5,
+    "product": "Custom Wedding Set"
+  },
+  {
+    "id": "t004",
+    "quote": "I had a vision for a ring that no store carried. Their design team turned my rough sketch into a perfect 3D model, and the finished ring exceeded my expectations.",
+    "author": "David K.",
+    "location": "Huntsville, AL",
+    "rating": 5,
+    "product": "Custom Anniversary Ring"
+  },
+  {
+    "id": "t005",
+    "quote": "The direct sourcing is real. They showed me exactly where the stone came from and walked me through the entire grading report. No other jeweler I visited offered that kind of transparency.",
+    "author": "Rachel & Tom",
+    "location": "Memphis, TN",
+    "rating": 5,
+    "product": "1.8ct Oval Diamond"
+  }
+]
