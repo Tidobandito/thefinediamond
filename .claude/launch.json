@@ -4,8 +4,8 @@
     {
       "name": "thefinediamond-dev",
       "runtimeExecutable": "bash",
-      "runtimeArgs": ["-c", "source $HOME/.nvm/nvm.sh && npm run dev"],
-      "port": 3000
+      "runtimeArgs": ["-c", "export NVM_DIR=\"$HOME/.nvm\" && [ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\" && cd /Users/toddrussell/Desktop/thefinediamond-rebuild/thefinediamond && npx next dev --port 3008 -H 0.0.0.0"],
+      "port": 3008
     }
   ]
 }

@@ -1,18 +1,14 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
+import { motion, useScroll, useTransform, useInView, useMotionValue, useSpring } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import DiamondCard from "@/components/ui/DiamondCard";
-import TestimonialCard from "@/components/ui/TestimonialCard";
-import diamondsData from "@/data/diamonds.json";
-import testimonialsData from "@/data/testimonials.json";
-import type { Diamond, Testimonial } from "@/lib/types";
+import TiltCard from "@/components/ui/TiltCard";
+import CountUp from "@/components/ui/CountUp";
+import HeroBackground from "@/components/ui/HeroBackground";
 
-const diamonds = diamondsData as Diamond[];
-const testimonials = testimonialsData as Testimonial[];
-const featured = diamonds.filter((d) => d.isFeatured).slice(0, 6);
+/* ─────────── animation variants ─────────── */
 
 const fadeUp = {
   hidden: { opacity: 0, y: 60 },
@@ -27,508 +23,1672 @@ const fadeUp = {
   }),
 };
 
-export default function HomePage() {
-  const heroRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: heroRef,
-    offset: ["start start", "end start"],
-  });
-  const heroY = useTransform(scrollYProgress, [0, 1], [0, 200]);
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.15, delayChildren: 0.1 },
+  },
+};
 
+const staggerItem = {
+  hidden: { opacity: 0, y: 40 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] },
+  },
+};
+
+/* entrance variants for variety */
+const slideFromLeft = {
+  hidden: { opacity: 0, x: -60 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.9, ease: [0.22, 1, 0.36, 1] },
+  },
+};
+
+const slideFromRight = {
+  hidden: { opacity: 0, x: 60 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.9, ease: [0.22, 1, 0.36, 1] },
+  },
+};
+
+const scaleIn = {
+  hidden: { opacity: 0, scale: 0.85 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] },
+  },
+};
+
+const tiltReveal = {
+  hidden: { opacity: 0, y: 40, rotateX: 8 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    rotateX: 0,
+    transition: { duration: 0.9, ease: [0.22, 1, 0.36, 1] },
+  },
+};
+
+/* hero word-by-word animation */
+const wordContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.08, delayChildren: 1.3 },
+  },
+};
+
+const wordReveal = {
+  hidden: { opacity: 0, y: 30, filter: "blur(4px)" },
+  visible: {
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
+  },
+};
+
+/* particle configuration for hero — fixed values to avoid hydration mismatch */
+const heroParticles = [
+  { id: 0, left: "8%", top: "15%", size: 1.5, duration: 3.2, delay: 0, blur: 0, drift: 12 },
+  { id: 1, left: "22%", top: "45%", size: 2, duration: 4.1, delay: 0.8, blur: 1, drift: -15 },
+  { id: 2, left: "35%", top: "25%", size: 1.2, duration: 3.8, delay: 1.5, blur: 0, drift: 8 },
+  { id: 3, left: "48%", top: "65%", size: 2.5, duration: 5, delay: 0.3, blur: 0, drift: -20 },
+  { id: 4, left: "62%", top: "35%", size: 1.8, duration: 3.5, delay: 2.1, blur: 1, drift: 15 },
+  { id: 5, left: "75%", top: "55%", size: 1.3, duration: 4.5, delay: 1.2, blur: 0, drift: -10 },
+  { id: 6, left: "88%", top: "20%", size: 2.2, duration: 3.9, delay: 3.0, blur: 0, drift: 18 },
+  { id: 7, left: "15%", top: "75%", size: 1.6, duration: 4.8, delay: 0.5, blur: 1, drift: -8 },
+  { id: 8, left: "42%", top: "85%", size: 1.4, duration: 3.3, delay: 2.5, blur: 0, drift: 12 },
+  { id: 9, left: "55%", top: "12%", size: 2.8, duration: 5.2, delay: 1.8, blur: 1, drift: -18 },
+  { id: 10, left: "70%", top: "70%", size: 1.1, duration: 4.2, delay: 3.5, blur: 0, drift: 6 },
+  { id: 11, left: "30%", top: "50%", size: 2.1, duration: 3.7, delay: 0.9, blur: 0, drift: -14 },
+  { id: 12, left: "82%", top: "42%", size: 1.7, duration: 4.6, delay: 2.8, blur: 1, drift: 10 },
+  { id: 13, left: "5%", top: "60%", size: 2.4, duration: 5.5, delay: 1.0, blur: 0, drift: -6 },
+  { id: 14, left: "92%", top: "80%", size: 1.3, duration: 3.1, delay: 3.8, blur: 0, drift: 16 },
+];
+
+/* ─────────── sample stone data for "Selected Stones" cards ─────────── */
+
+const featuredStones = [
+  {
+    src: "IMG_0247.JPG",
+    name: "Oval Brilliant Diamond",
+    shape: "Oval",
+    carat: "3.21 ct",
+    color: "D",
+    clarity: "VVS1",
+    cut: "Excellent",
+    certified: "GIA",
+    price: "$62,500",
+    status: "Available" as const,
+  },
+  {
+    src: "IMG_0804.JPG",
+    name: "Pear Shape Diamond",
+    shape: "Pear",
+    carat: "2.54 ct",
+    color: "E",
+    clarity: "VS1",
+    cut: "Very Good",
+    certified: "GIA",
+    price: "$41,800",
+    status: "Available" as const,
+  },
+  {
+    src: "IMG_1454.JPG",
+    name: "Ceylon Blue Sapphire",
+    shape: "Cushion",
+    carat: "5.87 ct",
+    color: "Vivid Blue",
+    clarity: "Eye Clean",
+    cut: "Excellent",
+    certified: "GRS",
+    price: "$89,000",
+    status: "Currently Reserved" as const,
+  },
+  {
+    src: "IMG_2357.JPG",
+    name: "Colombian Emerald",
+    shape: "Emerald",
+    carat: "4.12 ct",
+    color: "Vivid Green",
+    clarity: "Minor Oil",
+    cut: "Very Good",
+    certified: "Gubelin",
+    price: "$73,200",
+    status: "Available" as const,
+  },
+  {
+    src: "IMG_2608.JPG",
+    name: "Pigeon Blood Ruby",
+    shape: "Oval",
+    carat: "3.06 ct",
+    color: "Pigeon Blood",
+    clarity: "Eye Clean",
+    cut: "Excellent",
+    certified: "GRS",
+    price: "$128,000",
+    status: "Currently Reserved" as const,
+  },
+  {
+    src: "IMG_5043.JPG",
+    name: "Fancy Yellow Diamond",
+    shape: "Radiant",
+    carat: "4.50 ct",
+    color: "Fancy Vivid",
+    clarity: "VS2",
+    cut: "Excellent",
+    certified: "GIA",
+    price: "$95,000",
+    status: "Available" as const,
+  },
+];
+
+/* ─────────── testimonials data ─────────── */
+
+const testimonials = [
+  {
+    quote: "Matt found us a stone that three other dealers said didn't exist. The 4-carat Kashmir sapphire is now the centerpiece of my wife's anniversary ring. His eye for quality is unmatched.",
+    name: "James R.",
+    location: "Scottsdale, AZ",
+    detail: "4.2ct Kashmir Sapphire Ring",
+  },
+  {
+    quote: "The entire experience felt like having a private jeweler on retainer. From the first call to the final setting, every detail was handled with extraordinary care.",
+    name: "Victoria L.",
+    location: "Manhattan, NY",
+    detail: "Custom Engagement Ring",
+  },
+  {
+    quote: "I've purchased from Harry Winston and Graff. Matt's stones rival both at a fraction of the markup. The direct sourcing model isn't marketing — it's real savings on real stones.",
+    name: "David & Sarah K.",
+    location: "Beverly Hills, CA",
+    detail: "3.5ct D Flawless Diamond",
+  },
+];
+
+/* ─────────── main page ─────────── */
+
+export default function HomePage() {
   return (
     <>
       {/* ═══════════════════ HERO ═══════════════════ */}
-      <section ref={heroRef} className="relative h-screen overflow-hidden bg-black">
-        {/* Background image with parallax */}
-        <motion.div style={{ y: heroY }} className="absolute inset-0 scale-110">
-          <Image
-            src="https://images.unsplash.com/photo-1603561591411-07134e71a2a9?w=1920&q=90&auto=format"
-            alt="Extraordinary colored diamond ring on dark background"
-            fill
-            className="object-cover object-center"
-            priority
-            sizes="100vw"
-          />
-          <div className="absolute inset-0 bg-black/50" />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/20" />
-        </motion.div>
+      <HeroSection />
 
-        {/* Diamond fire accent glow — warmer, more vivid */}
-        <div className="absolute top-1/3 right-1/4 w-[600px] h-[600px] rounded-full bg-amber-500/8 blur-[180px] pointer-events-none" />
-        <div className="absolute bottom-1/4 left-1/3 w-[400px] h-[400px] rounded-full bg-blue-400/6 blur-[150px] pointer-events-none" />
-        <div className="absolute top-1/2 right-1/3 w-[300px] h-[300px] rounded-full bg-rose-400/4 blur-[120px] pointer-events-none" />
+      {/* ═══════════════════ VALUES ═══════════════════ */}
+      <ValuesSection />
 
-        {/* Content */}
-        <motion.div
-          style={{ opacity: heroOpacity }}
-          className="relative z-10 h-full flex items-center"
-        >
-          <div className="max-w-[1400px] mx-auto px-8 lg:px-12 w-full">
-            <div className="max-w-3xl">
-              <motion.div
-                initial={{ width: 0 }}
-                animate={{ width: 80 }}
-                transition={{ duration: 1.5, delay: 0.8, ease: [0.22, 1, 0.36, 1] }}
-                className="h-[1px] bg-gold mb-8"
-              />
+      {/* ═══════════════════ SELECTED STONES ═══════════════════ */}
+      <SelectedStonesSection />
 
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1, delay: 1 }}
-                className="text-gold/80 text-[11px] tracking-[0.5em] uppercase mb-8"
-              >
-                Est. Birmingham, Alabama
-              </motion.p>
+      {/* ═══════════════════ THE ATELIER ═══════════════════ */}
+      <AtelierSection />
 
-              <motion.h1
-                initial={{ opacity: 0, y: 40 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1.2, delay: 1.2, ease: [0.22, 1, 0.36, 1] }}
-                className="font-heading text-white text-[clamp(2.5rem,6vw,5.5rem)] leading-[1.05] tracking-tight mb-8"
-              >
-                Where Brilliance
-                <br />
-                <span className="gold-shimmer">Meets Precision</span>
-              </motion.h1>
+      {/* ═══════════════════ OUR ORIGIN ═══════════════════ */}
+      <OriginSection />
 
-              <motion.p
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1, delay: 1.6 }}
-                className="text-white/50 text-lg md:text-xl leading-relaxed mb-12 max-w-xl font-light"
-              >
-                Direct from our cutting facilities to you. Every stone
-                hand-selected, every piece designed with intention.
-              </motion.p>
+      {/* ═══════════════════ CLIENT STORIES ═══════════════════ */}
+      <TestimonialsSection />
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1, delay: 2 }}
-                className="flex flex-wrap gap-5"
-              >
-                <Link
-                  href="/diamonds"
-                  className="group relative bg-gold text-black px-10 py-4 text-[11px] tracking-[0.25em] uppercase font-medium overflow-hidden glow-pulse"
-                >
-                  <span className="relative z-10">Explore the Collection</span>
-                </Link>
-                <Link
-                  href="/custom-design"
-                  className="group border border-white/20 text-white px-10 py-4 text-[11px] tracking-[0.25em] uppercase font-light hover:border-gold/50 hover:text-gold transition-all duration-700"
-                >
-                  Begin Your Commission
-                </Link>
-              </motion.div>
-            </div>
-          </div>
-        </motion.div>
+      {/* ═══════════════════ PRIVATE ACCESS ═══════════════════ */}
+      <NewsletterSection />
 
-        {/* Scroll indicator */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 3 }}
-          className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 z-20"
-        >
-          <span className="text-white/20 text-[9px] tracking-[0.4em] uppercase">
-            Discover
-          </span>
+      {/* ═══════════════════ CONTACT FORM ═══════════════════ */}
+      <ContactSection />
+    </>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   HERO — Cinematic video with staggered text reveals
+═══════════════════════════════════════════════════════════════ */
+
+function HeroSection() {
+  const heroWords = ["Where", "Brilliance", "Meets", "Precision"];
+
+  return (
+    <section className="relative h-screen overflow-hidden bg-black">
+      {/* Animated background — replaces static video */}
+      <HeroBackground />
+
+      {/* Animated gold dust particles — upgraded */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {heroParticles.map((p) => (
           <motion.div
-            animate={{ y: [0, 12, 0] }}
-            transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-            className="w-[1px] h-12 bg-gradient-to-b from-gold/50 to-transparent"
+            key={p.id}
+            className="absolute rounded-full bg-gold/40"
+            style={{
+              left: p.left,
+              top: p.top,
+              width: `${p.size}px`,
+              height: `${p.size}px`,
+              filter: p.blur ? `blur(${p.blur}px)` : "none",
+            }}
+            animate={{
+              opacity: [0, 0.8, 0],
+              scale: [0, 1.5, 0],
+              y: [0, -40, -80],
+              x: [0, p.drift],
+            }}
+            transition={{
+              duration: p.duration,
+              repeat: Infinity,
+              delay: p.delay,
+              ease: "easeOut",
+            }}
           />
-        </motion.div>
-      </section>
+        ))}
+      </div>
 
-      {/* ═══════════════════ ATELIER VALUES ═══════════════════ */}
-      <section className="relative py-32 bg-black overflow-hidden">
-        {/* Ambient glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[1px] bg-gradient-to-r from-transparent via-gold/20 to-transparent" />
-
-        <div className="max-w-[1400px] mx-auto px-8 lg:px-12">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-0">
-            {[
-              {
-                num: "01",
-                title: "Direct Sourcing",
-                desc: "From our cutting facilities to your hand. No middlemen, no markups — just exceptional stones at remarkable value.",
-              },
-              {
-                num: "02",
-                title: "3D CAD Atelier",
-                desc: "Photorealistic renders from every angle before production begins. Your piece, perfected in the digital realm first.",
-              },
-              {
-                num: "03",
-                title: "GIA Certified",
-                desc: "Every diamond independently graded and certified. Full transparency on cut, clarity, color, and carat weight.",
-              },
-            ].map((item, index) => (
-              <motion.div
-                key={item.num}
-                custom={index}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "-100px" }}
-                variants={fadeUp}
-                className="relative p-12 lg:p-16 border-b md:border-b-0 md:border-r border-white/[0.04] last:border-r-0 last:border-b-0 group"
-              >
-                <span className="text-gold/30 text-[11px] tracking-[0.3em] uppercase mb-6 block">
-                  {item.num}
-                </span>
-                <h3 className="font-heading text-white text-2xl mb-4 group-hover:text-gold transition-colors duration-700">
-                  {item.title}
-                </h3>
-                <p className="text-white/35 text-sm leading-relaxed font-light">
-                  {item.desc}
-                </p>
-              </motion.div>
-            ))}
-          </div>
+      {/* Hero content */}
+      <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-6">
+        {/* Gold accent line with light sweep */}
+        <div className="relative mb-8">
+          <motion.div
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: 1 }}
+            transition={{ duration: 1.5, delay: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            className="w-20 h-[1px] bg-gold origin-center"
+          />
+          {/* Light sweep across the line */}
+          <motion.div
+            initial={{ x: "-100%" }}
+            animate={{ x: "200%" }}
+            transition={{ duration: 1, delay: 2.3, ease: "easeOut" }}
+            className="absolute top-0 left-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/60 to-transparent"
+          />
         </div>
-      </section>
 
-      {/* ═══════════════════ FEATURED STONES ═══════════════════ */}
-      <section className="relative py-32 bg-[#060608] overflow-hidden">
-        {/* Top glow line */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+        {/* Label */}
+        <motion.p
+          initial={{ opacity: 0, letterSpacing: "0.8em" }}
+          animate={{ opacity: 1, letterSpacing: "0.5em" }}
+          transition={{ duration: 1.2, delay: 1.0 }}
+          className="text-gold/80 text-[11px] tracking-[0.5em] uppercase mb-6"
+          style={{
+            fontFamily: "var(--font-body), 'Montserrat', sans-serif",
+            fontWeight: 300,
+          }}
+        >
+          Las Vegas &middot; Private Jeweler
+        </motion.p>
 
-        <div className="max-w-[1400px] mx-auto px-8 lg:px-12">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            className="mb-20"
-          >
+        {/* Main heading — word-by-word reveal */}
+        <motion.h1
+          variants={wordContainer}
+          initial="hidden"
+          animate="visible"
+          className="text-white text-5xl md:text-7xl lg:text-8xl tracking-tight mb-6 max-w-5xl"
+          style={{
+            fontFamily:
+              "var(--font-display), 'Cormorant Garamond', Georgia, serif",
+          }}
+        >
+          {heroWords.map((word, i) => (
             <motion.span
-              variants={fadeUp}
-              custom={0}
-              className="text-gold/60 text-[11px] tracking-[0.5em] uppercase block mb-6"
+              key={i}
+              variants={wordReveal}
+              className={`inline-block mr-[0.25em] ${
+                word === "Meets" ? "italic text-gold/90" : ""
+              }`}
             >
-              The Collection
+              {word}
             </motion.span>
-            <motion.h2
-              variants={fadeUp}
-              custom={1}
-              className="font-heading text-white text-4xl md:text-5xl lg:text-6xl tracking-tight mb-6"
-            >
-              Selected Stones
-            </motion.h2>
-            <motion.div
-              variants={fadeUp}
-              custom={2}
-              className="flex items-end justify-between"
-            >
-              <p className="text-white/30 text-base max-w-lg font-light leading-relaxed">
-                Each diamond hand-selected from our cutting facilities.
-                GIA certified, expertly graded, priced without retail markup.
-              </p>
-              <Link
-                href="/diamonds"
-                className="hidden md:inline-block text-gold/60 text-[11px] tracking-[0.25em] uppercase hover:text-gold transition-colors duration-500 border-b border-gold/20 hover:border-gold/60 pb-1"
-              >
-                View All Stones
-              </Link>
-            </motion.div>
-          </motion.div>
+          ))}
+        </motion.h1>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[1px] bg-white/[0.03]">
-            {featured.map((diamond, index) => (
-              <DiamondCard key={diamond.id} diamond={diamond} index={index} />
-            ))}
-          </div>
+        {/* Subtitle */}
+        <motion.p
+          initial={{ opacity: 0, y: 20, filter: "blur(4px)" }}
+          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          transition={{ duration: 1, delay: 1.9 }}
+          className="text-white/60 text-base md:text-lg max-w-xl mb-10 leading-relaxed"
+          style={{
+            fontFamily: "var(--font-body), 'Montserrat', sans-serif",
+            fontWeight: 300,
+          }}
+        >
+          Rare, investment-grade gemstones sourced globally.
+          Every stone hand-selected. Every piece bespoke.
+        </motion.p>
 
+        {/* CTAs with gesture feedback */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 2.2 }}
+          className="flex flex-col sm:flex-row gap-4"
+        >
           <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            className="text-center mt-16 md:hidden"
+            whileHover={{ scale: 1.03, boxShadow: "0 0 30px rgba(201,168,76,0.3)" }}
+            whileTap={{ scale: 0.97 }}
+            transition={{ type: "spring", stiffness: 400, damping: 20 }}
           >
             <Link
-              href="/diamonds"
-              className="text-gold/60 text-[11px] tracking-[0.25em] uppercase hover:text-gold transition-colors duration-500 border-b border-gold/20 pb-1"
+              href="/gallery"
+              className="btn-gold-shimmer inline-block px-10 py-4 text-[12px] tracking-[0.25em] uppercase bg-gold text-white hover:bg-gold/90 transition-all duration-500 glow-pulse"
+              style={{
+                fontFamily: "var(--font-body), 'Montserrat', sans-serif",
+                fontWeight: 400,
+              }}
             >
-              View All Stones
+              Explore the Collection
             </Link>
           </motion.div>
-        </div>
-      </section>
+          <motion.div
+            whileHover={{ scale: 1.03, boxShadow: "0 0 20px rgba(255,255,255,0.1)" }}
+            whileTap={{ scale: 0.97 }}
+            transition={{ type: "spring", stiffness: 400, damping: 20 }}
+          >
+            <Link
+              href="/custom-design"
+              className="btn-gold-shimmer inline-block px-10 py-4 text-[12px] tracking-[0.25em] uppercase text-white/85 border border-white/30 hover:border-gold hover:text-gold transition-all duration-500"
+              style={{
+                fontFamily: "var(--font-body), 'Montserrat', sans-serif",
+                fontWeight: 300,
+              }}
+            >
+              Begin Your Commission
+            </Link>
+          </motion.div>
+        </motion.div>
+      </div>
 
-      {/* ═══════════════════ THE ATELIER — CAD PROCESS ═══════════════════ */}
-      <section className="relative overflow-hidden">
-        {/* Full-bleed image section */}
-        <div className="relative h-[80vh] min-h-[600px]">
+      {/* Scroll indicator */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 3, duration: 1 }}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10"
+      >
+        <motion.div
+          animate={{ y: [0, 8, 0] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          className="w-[1px] h-10 bg-gradient-to-b from-transparent via-gold/50 to-transparent"
+        />
+      </motion.div>
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   VALUES — 01, 02, 03 with animated counters
+═══════════════════════════════════════════════════════════════ */
+
+function ValuesSection() {
+  return (
+    <section className="py-32 bg-white">
+      <div className="max-w-[1400px] mx-auto px-8 lg:px-12">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          className="text-center max-w-3xl mx-auto mb-24"
+        >
+          <motion.div
+            initial={{ scaleX: 0 }}
+            whileInView={{ scaleX: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+            className="w-16 h-[1px] bg-gold mx-auto mb-8 origin-center"
+          />
+          <motion.h2
+            variants={fadeUp}
+            custom={1}
+            className="text-navy text-4xl md:text-5xl tracking-tight mb-6"
+            style={{
+              fontFamily:
+                "var(--font-display), 'Cormorant Garamond', Georgia, serif",
+            }}
+          >
+            Rare Stones, Bespoke Service
+          </motion.h2>
+          <motion.p
+            variants={fadeUp}
+            custom={2}
+            className="text-muted text-lg leading-relaxed"
+            style={{
+              fontFamily: "var(--font-body), 'Montserrat', sans-serif",
+              fontWeight: 300,
+            }}
+          >
+            The Fine Diamond specializes in rare, investment-grade gemstones
+            sourced globally and presented privately. Every stone is
+            hand-selected. Every piece is designed to your specifications.
+          </motion.p>
+        </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-0">
+          {[
+            {
+              num: "01",
+              title: "Globally Sourced",
+              desc: "Rare diamonds, sapphires, emeralds, rubies, and collector stones sourced from trusted mines and cutting houses worldwide.",
+            },
+            {
+              num: "02",
+              title: "Bespoke Design",
+              desc: "From concept to creation — every piece designed and crafted to your vision with precision and care.",
+            },
+            {
+              num: "03",
+              title: "Private Service",
+              desc: "Discreet, personalized consultations. Matt works directly with every client from first inquiry to final delivery.",
+            },
+          ].map((item, index) => (
+            <motion.div
+              key={item.num}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+              variants={index === 0 ? slideFromLeft : index === 2 ? slideFromRight : fadeUp}
+              custom={index}
+              className="relative p-12 lg:p-16 border-b md:border-b-0 md:border-r border-gold/10 last:border-r-0 last:border-b-0 group"
+            >
+              <CountUp
+                value={item.num}
+                className="text-gold/30 text-6xl font-light tracking-wider block mb-6"
+              />
+              <h3
+                className="text-navy text-2xl mb-4 group-hover:text-gold transition-colors duration-700"
+                style={{
+                  fontFamily:
+                    "var(--font-display), 'Cormorant Garamond', Georgia, serif",
+                }}
+              >
+                {item.title}
+              </h3>
+              <p
+                className="text-muted text-sm leading-relaxed"
+                style={{
+                  fontFamily: "var(--font-body), 'Montserrat', sans-serif",
+                  fontWeight: 300,
+                }}
+              >
+                {item.desc}
+              </p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SELECTED STONES — Rich product cards with specs
+═══════════════════════════════════════════════════════════════ */
+
+function SelectedStonesSection() {
+  return (
+    <section className="py-32 bg-white">
+      <div className="max-w-[1400px] mx-auto px-8 lg:px-12">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          className="mb-20"
+        >
+          <motion.span
+            variants={fadeUp}
+            custom={0}
+            className="text-gold/60 text-[11px] tracking-[0.5em] uppercase block mb-6"
+            style={{
+              fontFamily: "var(--font-body), 'Montserrat', sans-serif",
+            }}
+          >
+            The Collection
+          </motion.span>
+          <motion.h2
+            variants={fadeUp}
+            custom={1}
+            className="text-navy text-4xl md:text-5xl lg:text-6xl tracking-tight mb-6"
+            style={{
+              fontFamily:
+                "var(--font-display), 'Cormorant Garamond', Georgia, serif",
+            }}
+          >
+            Selected Stones
+          </motion.h2>
+          <motion.div
+            variants={fadeUp}
+            custom={2}
+            className="flex items-end justify-between"
+          >
+            <p
+              className="text-muted text-base max-w-lg leading-relaxed"
+              style={{
+                fontFamily: "var(--font-body), 'Montserrat', sans-serif",
+                fontWeight: 300,
+              }}
+            >
+              A curated selection from our current inventory. Each stone
+              available for private viewing.
+            </p>
+            <Link
+              href="/gallery"
+              className="hidden md:inline-block text-gold text-[11px] tracking-[0.25em] uppercase hover:text-gold/80 transition-colors duration-500 border-b border-gold/30 hover:border-gold pb-1"
+              style={{
+                fontFamily: "var(--font-body), 'Montserrat', sans-serif",
+              }}
+            >
+              View Full Gallery
+            </Link>
+          </motion.div>
+        </motion.div>
+
+        {/* Stone cards grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {featuredStones.map((stone, index) => (
+            <motion.div
+              key={stone.src}
+              initial={{
+                opacity: 0,
+                x: index < 3 ? -30 : 30,
+                y: 30,
+              }}
+              whileInView={{ opacity: 1, x: 0, y: 0 }}
+              viewport={{ once: true }}
+              transition={{
+                duration: 0.8,
+                delay: index * 0.1,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+            >
+              <TiltCard>
+                <div className="group relative overflow-hidden bg-white border border-navy/5 hover:border-gold/30 transition-all duration-500">
+                  {/* Image */}
+                  <div
+                    className="relative overflow-hidden"
+                    style={{ aspectRatio: "3/4" }}
+                  >
+                    <Image
+                      src={`/images/gallery/${stone.src}`}
+                      alt={stone.name}
+                      fill
+                      className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    />
+                    {/* Overlay gradient */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                    {/* Shape badge */}
+                    <span
+                      className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1.5 text-[9px] tracking-[0.2em] uppercase text-navy"
+                      style={{
+                        fontFamily:
+                          "var(--font-body), 'Montserrat', sans-serif",
+                      }}
+                    >
+                      {stone.shape}
+                    </span>
+
+                    {/* Certification badge */}
+                    <span
+                      className="absolute top-4 right-4 bg-gold/90 backdrop-blur-sm px-3 py-1.5 text-[9px] tracking-[0.2em] uppercase text-white"
+                      style={{
+                        fontFamily:
+                          "var(--font-body), 'Montserrat', sans-serif",
+                      }}
+                    >
+                      {stone.certified}
+                    </span>
+
+                    {/* Status badge */}
+                    {stone.status === "Currently Reserved" && (
+                      <span
+                        className="absolute bottom-4 left-4 bg-black/70 backdrop-blur-sm px-3 py-1.5 text-[9px] tracking-[0.15em] uppercase text-amber-300"
+                        style={{
+                          fontFamily:
+                            "var(--font-body), 'Montserrat', sans-serif",
+                        }}
+                      >
+                        Reserved
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Info panel */}
+                  <div className="p-5">
+                    <h3
+                      className="text-navy text-base mb-1"
+                      style={{
+                        fontFamily:
+                          "var(--font-display), 'Cormorant Garamond', Georgia, serif",
+                        fontSize: "18px",
+                      }}
+                    >
+                      {stone.name}
+                    </h3>
+                    <p
+                      className="text-gold text-sm mb-3"
+                      style={{
+                        fontFamily:
+                          "var(--font-body), 'Montserrat', sans-serif",
+                        fontWeight: 400,
+                      }}
+                    >
+                      {stone.carat}
+                    </p>
+
+                    {/* Specs row */}
+                    <div className="flex gap-3 mb-4 flex-wrap">
+                      {[
+                        { label: "Color", value: stone.color },
+                        { label: "Clarity", value: stone.clarity },
+                        { label: "Cut", value: stone.cut },
+                      ].map((spec) => (
+                        <div
+                          key={spec.label}
+                          className="text-center px-2 py-1 border border-navy/5 flex-1 min-w-0"
+                        >
+                          <span
+                            className="block text-[8px] tracking-[0.2em] uppercase text-muted/60 mb-0.5"
+                            style={{
+                              fontFamily:
+                                "var(--font-body), 'Montserrat', sans-serif",
+                            }}
+                          >
+                            {spec.label}
+                          </span>
+                          <span
+                            className="block text-navy text-[11px] font-medium truncate"
+                            style={{
+                              fontFamily:
+                                "var(--font-body), 'Montserrat', sans-serif",
+                            }}
+                          >
+                            {spec.value}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Price and CTA */}
+                    <div className="flex items-center justify-between">
+                      <span
+                        className="text-navy text-lg"
+                        style={{
+                          fontFamily:
+                            "var(--font-display), 'Cormorant Garamond', Georgia, serif",
+                        }}
+                      >
+                        {stone.price}
+                      </span>
+                      <motion.div
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        transition={{ type: "spring", stiffness: 400, damping: 20 }}
+                        className="inline-block"
+                      >
+                        <Link
+                          href={`/contact?stone=${encodeURIComponent(stone.name)}`}
+                          className="btn-gold-shimmer text-[9px] tracking-[0.2em] uppercase border border-gold text-gold hover:bg-gold hover:text-white px-4 py-2 transition-all duration-500 inline-block"
+                          style={{
+                            fontFamily:
+                              "var(--font-body), 'Montserrat', sans-serif",
+                          }}
+                        >
+                          Inquire
+                        </Link>
+                      </motion.div>
+                    </div>
+                  </div>
+                </div>
+              </TiltCard>
+            </motion.div>
+          ))}
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          className="text-center mt-16 md:hidden"
+        >
+          <Link
+            href="/gallery"
+            className="text-gold text-[11px] tracking-[0.25em] uppercase hover:text-gold/80 transition-colors duration-500 border-b border-gold/30 pb-1"
+            style={{
+              fontFamily: "var(--font-body), 'Montserrat', sans-serif",
+            }}
+          >
+            View Full Gallery
+          </Link>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   THE ATELIER — 4-step process with roman numerals
+═══════════════════════════════════════════════════════════════ */
+
+function AtelierSection() {
+  const steps = [
+    {
+      numeral: "I",
+      title: "Consultation",
+      desc: "We begin with a private conversation about your vision — the occasion, the stone, the style. No catalog. No compromise.",
+    },
+    {
+      numeral: "II",
+      title: "3D Design",
+      desc: "Our master designers translate your vision into photorealistic 3D CAD renderings. You see every angle before a single grain of metal is touched.",
+    },
+    {
+      numeral: "III",
+      title: "Refinement",
+      desc: "We refine every millimeter together — adjusting proportions, stone placement, and metalwork until the design is exactly right.",
+    },
+    {
+      numeral: "IV",
+      title: "Creation",
+      desc: "Your piece is handcrafted by master jewelers. Set with your chosen stone. Delivered with full certification and a lifetime guarantee.",
+    },
+  ];
+
+  return (
+    <section className="py-32 bg-navy relative overflow-hidden">
+      {/* Subtle background pattern */}
+      <div className="absolute inset-0 opacity-5">
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle at 25% 25%, rgba(201,168,76,0.3) 0%, transparent 50%), radial-gradient(circle at 75% 75%, rgba(201,168,76,0.2) 0%, transparent 50%)",
+          }}
+        />
+      </div>
+
+      <div className="relative z-10 max-w-[1400px] mx-auto px-8 lg:px-12">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          className="text-center max-w-3xl mx-auto mb-20"
+        >
+          <motion.span
+            variants={fadeUp}
+            custom={0}
+            className="text-gold/50 text-[11px] tracking-[0.5em] uppercase block mb-6"
+            style={{
+              fontFamily: "var(--font-body), 'Montserrat', sans-serif",
+            }}
+          >
+            Bespoke Process
+          </motion.span>
+          <motion.h2
+            variants={fadeUp}
+            custom={1}
+            className="text-white text-4xl md:text-5xl lg:text-6xl tracking-tight mb-6"
+            style={{
+              fontFamily:
+                "var(--font-display), 'Cormorant Garamond', Georgia, serif",
+            }}
+          >
+            The Atelier
+          </motion.h2>
+          <motion.p
+            variants={fadeUp}
+            custom={2}
+            className="text-white/50 text-base leading-relaxed"
+            style={{
+              fontFamily: "var(--font-body), 'Montserrat', sans-serif",
+              fontWeight: 300,
+            }}
+          >
+            From first conversation to final delivery — a four-step journey to
+            your one-of-a-kind piece.
+          </motion.p>
+        </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-0 relative">
+          {/* Connecting line — draws on scroll */}
+          <motion.div
+            className="hidden md:block absolute top-16 left-[12.5%] right-[12.5%] h-[1px] bg-gradient-to-r from-transparent via-gold/30 to-transparent origin-left"
+            initial={{ scaleX: 0 }}
+            whileInView={{ scaleX: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1.5, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          />
+
+          {steps.map((step, i) => (
+            <motion.div
+              key={step.numeral}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{
+                duration: 0.8,
+                delay: i * 0.2,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+              className="relative text-center px-6 py-8"
+            >
+              {/* Roman numeral with spring-bounce ring */}
+              <div className="relative inline-flex items-center justify-center w-20 h-20 mb-8">
+                <motion.div
+                  className="absolute inset-0 rounded-full border border-gold/30"
+                  initial={{ scale: 0, opacity: 0 }}
+                  whileInView={{ scale: 1, opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 200,
+                    damping: 15,
+                    delay: i * 0.2 + 0.3,
+                  }}
+                />
+                <span
+                  className="animate-gradient-text text-2xl tracking-wider"
+                  style={{
+                    fontFamily:
+                      "var(--font-display), 'Cormorant Garamond', Georgia, serif",
+                  }}
+                >
+                  {step.numeral}
+                </span>
+              </div>
+
+              <h3
+                className="text-white text-xl mb-3"
+                style={{
+                  fontFamily:
+                    "var(--font-display), 'Cormorant Garamond', Georgia, serif",
+                }}
+              >
+                {step.title}
+              </h3>
+              <p
+                className="text-white/40 text-sm leading-relaxed"
+                style={{
+                  fontFamily: "var(--font-body), 'Montserrat', sans-serif",
+                  fontWeight: 300,
+                }}
+              >
+                {step.desc}
+              </p>
+            </motion.div>
+          ))}
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, delay: 0.8 }}
+          className="text-center mt-16"
+        >
+          <motion.div
+            whileHover={{ scale: 1.03, boxShadow: "0 0 30px rgba(201,168,76,0.3)" }}
+            whileTap={{ scale: 0.97 }}
+            transition={{ type: "spring", stiffness: 400, damping: 20 }}
+            className="inline-block"
+          >
+            <Link
+              href="/custom-design"
+              className="btn-gold-shimmer inline-block px-10 py-4 text-[12px] tracking-[0.25em] uppercase bg-gold text-white hover:bg-gold/90 transition-all duration-500 glow-pulse"
+              style={{
+                fontFamily: "var(--font-body), 'Montserrat', sans-serif",
+                fontWeight: 400,
+              }}
+            >
+              Start Your Design
+            </Link>
+          </motion.div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   OUR ORIGIN — Full-bleed parallax sourcing story
+═══════════════════════════════════════════════════════════════ */
+
+function OriginSection() {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
+  const y = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
+  const opacity = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0, 1, 1, 0]);
+
+  return (
+    <section ref={ref} className="relative py-0 overflow-hidden">
+      {/* Full-bleed parallax image */}
+      <div className="relative h-[80vh] min-h-[600px] overflow-hidden">
+        <motion.div style={{ y }} className="absolute inset-0 scale-110">
           <Image
-            src="https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=1920&q=85&auto=format"
-            alt="Diamond craftsmanship"
+            src="/images/gallery/IMG_1130.JPG"
+            alt="Fine gemstones sourced from around the world"
             fill
             className="object-cover"
             sizes="100vw"
           />
-          <div className="absolute inset-0 bg-black/60" />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
+        </motion.div>
+        <div className="absolute inset-0 bg-gradient-to-r from-navy/90 via-navy/70 to-navy/40" />
 
-          <div className="relative z-10 h-full flex items-center">
-            <div className="max-w-[1400px] mx-auto px-8 lg:px-12 w-full">
-              <div className="max-w-xl">
-                <motion.div
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true }}
-                >
-                  <motion.span
-                    variants={fadeUp}
-                    custom={0}
-                    className="text-gold/60 text-[11px] tracking-[0.5em] uppercase block mb-6"
-                  >
-                    The Atelier
-                  </motion.span>
-                  <motion.h2
-                    variants={fadeUp}
-                    custom={1}
-                    className="font-heading text-white text-4xl md:text-5xl lg:text-6xl tracking-tight leading-[1.1] mb-6"
-                  >
-                    Your Vision,{" "}
-                    <span className="italic text-gold">Realized</span>
-                  </motion.h2>
-                  <motion.p
-                    variants={fadeUp}
-                    custom={2}
-                    className="text-white/45 text-lg leading-relaxed mb-10 font-light"
-                  >
-                    From a whispered idea to a photorealistic 3D render to the
-                    finished masterwork in your hands. Our CAD design process
-                    is where imagination meets diamond-setting precision.
-                  </motion.p>
-
-                  {/* Process steps — minimal, editorial */}
-                  <motion.div variants={fadeUp} custom={3} className="space-y-6 mb-12">
-                    {[
-                      { num: "I", label: "Consultation", detail: "Share your vision" },
-                      { num: "II", label: "3D Design", detail: "Photorealistic CAD renders" },
-                      { num: "III", label: "Refinement", detail: "Unlimited revisions" },
-                      { num: "IV", label: "Creation", detail: "Master craftsmanship" },
-                    ].map((step) => (
-                      <div key={step.num} className="flex items-center gap-6 group">
-                        <span className="text-gold/40 text-sm font-heading w-8">
-                          {step.num}
-                        </span>
-                        <div className="w-8 h-[1px] bg-white/10 group-hover:bg-gold/40 group-hover:w-12 transition-all duration-700" />
-                        <span className="text-white/70 text-sm tracking-wider uppercase group-hover:text-white transition-colors duration-500">
-                          {step.label}
-                        </span>
-                        <span className="text-white/20 text-sm font-light hidden sm:inline">
-                          — {step.detail}
-                        </span>
-                      </div>
-                    ))}
-                  </motion.div>
-
-                  <motion.div variants={fadeUp} custom={4}>
-                    <Link
-                      href="/custom-design"
-                      className="inline-block border border-gold/40 text-gold px-10 py-4 text-[11px] tracking-[0.25em] uppercase hover:bg-gold hover:text-black transition-all duration-700"
-                    >
-                      Begin Your Commission
-                    </Link>
-                  </motion.div>
-                </motion.div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════════════════ ORIGIN STORY ═══════════════════ */}
-      <section className="relative py-40 bg-black overflow-hidden">
-        <div className="absolute inset-0">
-          <div className="absolute top-1/2 right-0 w-[600px] h-[600px] rounded-full bg-gold/[0.03] blur-[200px]" />
-        </div>
-
-        <div className="max-w-[1400px] mx-auto px-8 lg:px-12 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-            {/* Image side */}
-            <motion.div
-              initial={{ opacity: 0, x: -40 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-              className="relative aspect-[4/5] overflow-hidden"
-            >
-              <Image
-                src="https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=1200&q=85&auto=format"
-                alt="Diamond cutting and polishing"
-                fill
-                className="object-cover"
-                sizes="(max-width: 1024px) 100vw, 50vw"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-
-              {/* Corner accent */}
-              <div className="absolute top-6 left-6 w-12 h-12 border-l border-t border-gold/30" />
-              <div className="absolute bottom-6 right-6 w-12 h-12 border-r border-b border-gold/30" />
-            </motion.div>
-
-            {/* Text side */}
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-            >
+        {/* Content */}
+        <motion.div
+          style={{ opacity }}
+          className="relative z-10 h-full flex items-center"
+        >
+          <div className="max-w-[1400px] mx-auto px-8 lg:px-12 w-full">
+            <div className="max-w-xl">
               <motion.span
-                variants={fadeUp}
-                custom={0}
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8 }}
                 className="text-gold/60 text-[11px] tracking-[0.5em] uppercase block mb-6"
+                style={{
+                  fontFamily: "var(--font-body), 'Montserrat', sans-serif",
+                }}
               >
                 Our Origin
               </motion.span>
+
               <motion.h2
-                variants={fadeUp}
-                custom={1}
-                className="font-heading text-white text-4xl md:text-5xl tracking-tight leading-[1.1] mb-8"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{
+                  duration: 1,
+                  delay: 0.2,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+                className="text-white text-4xl md:text-5xl lg:text-6xl tracking-tight mb-8"
+                style={{
+                  fontFamily:
+                    "var(--font-display), 'Cormorant Garamond', Georgia, serif",
+                }}
               >
-                From Mine to
-                <br />
-                Masterpiece
+                From Mine to{" "}
+                <span className="italic text-gold">Masterpiece</span>
               </motion.h2>
+
               <motion.div
-                variants={fadeUp}
-                custom={2}
-                className="w-16 h-[1px] bg-gold/40 mb-8"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.4 }}
+                className="w-16 h-[1px] bg-gold mb-8"
               />
+
               <motion.p
-                variants={fadeUp}
-                custom={3}
-                className="text-white/35 text-base leading-[1.8] mb-6 font-light"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.5 }}
+                className="text-white/60 text-base leading-relaxed mb-6"
+                style={{
+                  fontFamily: "var(--font-body), 'Montserrat', sans-serif",
+                  fontWeight: 300,
+                }}
               >
-                Every diamond begins its journey deep within the earth.
-                Ours travel directly from the cutting floor to your hand —
-                no wholesalers, no inflated retail margins, no compromises.
+                Matt sources directly from the world&apos;s finest mines and
+                cutting houses — from the sapphire fields of Sri Lanka to the
+                emerald deposits of Colombia. No middlemen. No markups. Just
+                extraordinary stones at honest prices.
               </motion.p>
+
               <motion.p
-                variants={fadeUp}
-                custom={4}
-                className="text-white/35 text-base leading-[1.8] mb-12 font-light"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.6 }}
+                className="text-white/50 text-sm leading-relaxed mb-10"
+                style={{
+                  fontFamily: "var(--font-body), 'Montserrat', sans-serif",
+                  fontWeight: 300,
+                }}
               >
-                The result is a stone of extraordinary quality at a price
-                that reflects its true value — not the overhead of a
-                traditional supply chain.
+                Every stone is evaluated in person, certified by the world&apos;s
+                leading gemological laboratories, and presented to you with
+                complete transparency on origin, treatment, and value.
               </motion.p>
-              <motion.div variants={fadeUp} custom={5}>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.7 }}
+              >
                 <Link
                   href="/about"
-                  className="text-gold/60 text-[11px] tracking-[0.25em] uppercase hover:text-gold transition-colors duration-500 border-b border-gold/20 hover:border-gold/60 pb-1"
+                  className="btn-gold-shimmer inline-block px-8 py-3 text-[11px] tracking-[0.25em] uppercase text-gold border border-gold/40 hover:bg-gold hover:text-white transition-all duration-500"
+                  style={{
+                    fontFamily: "var(--font-body), 'Montserrat', sans-serif",
+                  }}
                 >
-                  The Full Story
+                  Our Story
                 </Link>
               </motion.div>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TESTIMONIALS — Client stories with elegant cards
+═══════════════════════════════════════════════════════════════ */
+
+function TestimonialsSection() {
+  return (
+    <section className="py-32 bg-white">
+      <div className="max-w-[1400px] mx-auto px-8 lg:px-12">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          className="text-center max-w-3xl mx-auto mb-20"
+        >
+          <motion.span
+            variants={fadeUp}
+            custom={0}
+            className="text-gold/60 text-[11px] tracking-[0.5em] uppercase block mb-6"
+            style={{
+              fontFamily: "var(--font-body), 'Montserrat', sans-serif",
+            }}
+          >
+            In Their Words
+          </motion.span>
+          <motion.h2
+            variants={fadeUp}
+            custom={1}
+            className="text-navy text-4xl md:text-5xl tracking-tight"
+            style={{
+              fontFamily:
+                "var(--font-display), 'Cormorant Garamond', Georgia, serif",
+            }}
+          >
+            Client Stories
+          </motion.h2>
+        </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {testimonials.map((t, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 40, rotateX: 8 }}
+              whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+              viewport={{ once: true }}
+              transition={{
+                duration: 0.9,
+                delay: i * 0.15,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+              style={{ perspective: 800 }}
+              className="relative p-8 lg:p-10 border border-navy/5 hover:border-gold/20 transition-all duration-700 group"
+            >
+              {/* Quote mark */}
+              <span className="quote-mark">&ldquo;</span>
+
+              <p
+                className="relative text-navy/80 text-sm leading-relaxed mb-8 pt-8"
+                style={{
+                  fontFamily: "var(--font-body), 'Montserrat', sans-serif",
+                  fontWeight: 300,
+                }}
+              >
+                {t.quote}
+              </p>
+
+              <div className="w-8 h-[1px] bg-gold/30 mb-4 group-hover:w-12 transition-all duration-500" />
+
+              <p
+                className="text-navy text-sm mb-1"
+                style={{
+                  fontFamily:
+                    "var(--font-display), 'Cormorant Garamond', Georgia, serif",
+                  fontSize: "16px",
+                }}
+              >
+                {t.name}
+              </p>
+              <p
+                className="text-muted text-[11px] tracking-[0.1em] mb-1"
+                style={{
+                  fontFamily: "var(--font-body), 'Montserrat', sans-serif",
+                  fontWeight: 300,
+                }}
+              >
+                {t.location}
+              </p>
+              <p
+                className="text-gold/60 text-[10px] tracking-[0.15em] uppercase"
+                style={{
+                  fontFamily: "var(--font-body), 'Montserrat', sans-serif",
+                }}
+              >
+                {t.detail}
+              </p>
             </motion.div>
-          </div>
+          ))}
         </div>
-      </section>
+      </div>
+    </section>
+  );
+}
 
-      {/* ═══════════════════ TESTIMONIALS ═══════════════════ */}
-      <section className="relative py-32 bg-[#060608]">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+/* ═══════════════════════════════════════════════════════════════
+   NEWSLETTER — Private Access email capture
+═══════════════════════════════════════════════════════════════ */
 
-        <div className="max-w-[1400px] mx-auto px-8 lg:px-12">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="text-center mb-20"
+function NewsletterSection() {
+  const [email, setEmail] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (email.trim()) {
+      setSubmitted(true);
+    }
+  };
+
+  return (
+    <section className="py-24 bg-navy relative overflow-hidden">
+      {/* Decorative gold line patterns */}
+      <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-gold/20 to-transparent" />
+      <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-gold/20 to-transparent" />
+
+      <div className="max-w-2xl mx-auto px-8 text-center">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >
+          <motion.span
+            variants={scaleIn}
+            className="text-gold/50 text-[11px] tracking-[0.5em] uppercase block mb-6"
+            style={{
+              fontFamily: "var(--font-body), 'Montserrat', sans-serif",
+            }}
           >
-            <motion.span
-              variants={fadeUp}
-              custom={0}
-              className="text-gold/60 text-[11px] tracking-[0.5em] uppercase block mb-6"
-            >
-              Client Stories
-            </motion.span>
-            <motion.h2
-              variants={fadeUp}
-              custom={1}
-              className="font-heading text-white text-4xl md:text-5xl tracking-tight"
-            >
-              In Their Words
-            </motion.h2>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-[1px] bg-white/[0.03]">
-            {testimonials.slice(0, 3).map((testimonial, index) => (
-              <TestimonialCard
-                key={testimonial.id}
-                testimonial={testimonial}
-                index={index}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════════════════ NEWSLETTER ═══════════════════ */}
-      <section className="relative py-32 bg-black">
-        <div className="absolute inset-0">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-gold/[0.03] blur-[200px]" />
-        </div>
-
-        <div className="max-w-xl mx-auto px-8 text-center relative z-10">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
+            Exclusive
+          </motion.span>
+          <motion.h2
+            variants={scaleIn}
+            className="text-white text-3xl md:text-4xl tracking-tight mb-4"
+            style={{
+              fontFamily:
+                "var(--font-display), 'Cormorant Garamond', Georgia, serif",
+            }}
           >
-            <motion.h2
-              variants={fadeUp}
-              custom={0}
-              className="font-heading text-white text-3xl md:text-4xl tracking-tight mb-4"
-            >
-              Private Access
-            </motion.h2>
-            <motion.p
-              variants={fadeUp}
-              custom={1}
-              className="text-white/30 text-sm mb-10 font-light"
-            >
-              First access to new acquisitions, private viewings,
-              and exclusive commission opportunities.
-            </motion.p>
+            Private Access
+          </motion.h2>
+          <motion.p
+            variants={scaleIn}
+            className="text-white/40 text-sm leading-relaxed mb-10"
+            style={{
+              fontFamily: "var(--font-body), 'Montserrat', sans-serif",
+              fontWeight: 300,
+            }}
+          >
+            Be the first to see new acquisitions, rare finds, and private
+            collection events. Reserved for our inner circle.
+          </motion.p>
 
+          {submitted ? (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="py-4"
+            >
+              <p
+                className="text-gold text-sm tracking-wide"
+                style={{
+                  fontFamily: "var(--font-body), 'Montserrat', sans-serif",
+                }}
+              >
+                Welcome to the inner circle. We&apos;ll be in touch.
+              </p>
+            </motion.div>
+          ) : (
             <motion.form
               variants={fadeUp}
-              custom={2}
-              onSubmit={(e) => e.preventDefault()}
-              className="flex flex-col sm:flex-row gap-3"
+              custom={3}
+              onSubmit={handleSubmit}
+              className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
             >
               <input
                 type="email"
-                placeholder="Your email"
-                className="flex-1 px-6 py-4 bg-white/[0.04] border border-white/[0.08] text-white placeholder-white/20 text-sm focus:outline-none focus:border-gold/40 transition-colors duration-500"
                 required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email"
+                className="newsletter-input flex-1 px-5 py-3.5 bg-white/5 border border-white/10 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-gold/50 transition-all duration-500"
+                style={{
+                  fontFamily: "var(--font-body), 'Montserrat', sans-serif",
+                  fontWeight: 300,
+                }}
               />
               <button
                 type="submit"
-                className="px-8 py-4 bg-gold text-black text-[11px] tracking-[0.2em] uppercase font-medium hover:bg-gold-light transition-colors duration-500 whitespace-nowrap"
+                className="btn-gold-shimmer px-8 py-3.5 bg-gold text-white text-[11px] tracking-[0.2em] uppercase hover:bg-gold/90 transition-all duration-500"
+                style={{
+                  fontFamily: "var(--font-body), 'Montserrat', sans-serif",
+                  fontWeight: 400,
+                }}
               >
-                Request Access
+                Join
               </button>
             </motion.form>
+          )}
+        </motion.div>
+      </div>
+    </section>
+  );
+}
 
-            <motion.p
-              variants={fadeUp}
-              custom={3}
-              className="text-white/15 text-[10px] mt-6 tracking-wider"
-            >
-              By invitation. Unsubscribe anytime.
-            </motion.p>
-          </motion.div>
+/* ═══════════════════════════════════════════════════════════════
+   CONTACT FORM — Inquiry form (existing, refined)
+═══════════════════════════════════════════════════════════════ */
+
+function ContactSection() {
+  return (
+    <section id="contact" className="py-32 bg-white">
+      <div className="max-w-3xl mx-auto px-8 lg:px-12">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <motion.div
+            variants={fadeUp}
+            custom={0}
+            className="w-16 h-[1px] bg-gold mx-auto mb-8"
+          />
+          <motion.h2
+            variants={fadeUp}
+            custom={1}
+            className="text-navy text-4xl md:text-5xl tracking-tight mb-4"
+            style={{
+              fontFamily:
+                "var(--font-display), 'Cormorant Garamond', Georgia, serif",
+            }}
+          >
+            Begin the Conversation
+          </motion.h2>
+          <motion.p
+            variants={fadeUp}
+            custom={2}
+            className="text-muted text-base leading-relaxed"
+            style={{
+              fontFamily: "var(--font-body), 'Montserrat', sans-serif",
+              fontWeight: 300,
+            }}
+          >
+            Tell us what you&apos;re looking for — we source stones globally and
+            work entirely to your specifications.
+          </motion.p>
+        </motion.div>
+
+        <InquiryForm />
+      </div>
+    </section>
+  );
+}
+
+/* ─────────── Inquiry Form ─────────── */
+
+function InquiryForm() {
+  const [formData, setFormData] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    stoneInterest: "",
+    budgetRange: "",
+    message: "",
+  });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [status, setStatus] = useState<
+    "idle" | "submitting" | "success" | "error"
+  >("idle");
+
+  const validate = (field: string, value: string) => {
+    const newErrors = { ...errors };
+    if (field === "name" && !value.trim())
+      newErrors.name = "Full name is required.";
+    else if (field === "name") delete newErrors.name;
+
+    if (field === "phone" && !value.trim())
+      newErrors.phone = "Phone number is required.";
+    else if (field === "phone") delete newErrors.phone;
+
+    if (field === "email") {
+      if (!value.trim()) newErrors.email = "Email is required.";
+      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value))
+        newErrors.email = "Please enter a valid email.";
+      else delete newErrors.email;
+    }
+
+    if (field === "stoneInterest" && !value)
+      newErrors.stoneInterest = "Please select a stone type.";
+    else if (field === "stoneInterest") delete newErrors.stoneInterest;
+
+    setErrors(newErrors);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const newErrors: Record<string, string> = {};
+    if (!formData.name.trim()) newErrors.name = "Full name is required.";
+    if (!formData.phone.trim()) newErrors.phone = "Phone number is required.";
+    if (!formData.email.trim()) newErrors.email = "Email is required.";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
+      newErrors.email = "Please enter a valid email.";
+    if (!formData.stoneInterest)
+      newErrors.stoneInterest = "Please select a stone type.";
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    setStatus("submitting");
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      if (res.ok) {
+        setStatus("success");
+      } else {
+        setStatus("error");
+      }
+    } catch {
+      setStatus("error");
+    }
+  };
+
+  if (status === "success") {
+    return (
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="text-center py-16"
+      >
+        <div className="w-16 h-[1px] bg-gold mx-auto mb-8" />
+        <h3
+          className="text-navy text-3xl mb-4"
+          style={{
+            fontFamily:
+              "var(--font-display), 'Cormorant Garamond', Georgia, serif",
+          }}
+        >
+          Thank You
+        </h3>
+        <p
+          className="text-muted"
+          style={{
+            fontFamily: "var(--font-body), 'Montserrat', sans-serif",
+            fontWeight: 300,
+          }}
+        >
+          Thank you. Matt will be in touch within 24 hours.
+        </p>
+      </motion.div>
+    );
+  }
+
+  const inputClass = (field: string) =>
+    `w-full px-4 py-3 bg-white border ${
+      errors[field] ? "border-red-400" : "border-navy/10"
+    } text-navy text-sm focus:outline-none focus:border-gold transition-colors duration-500`;
+
+  return (
+    <motion.form
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.8 }}
+      onSubmit={handleSubmit}
+      className="space-y-6"
+    >
+      {status === "error" && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-6 py-4 text-sm">
+          Something went wrong. Please call us at 786-230-1333 or email
+          matt@thefinediamond.com directly.
         </div>
-      </section>
-    </>
+      )}
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div>
+          <label
+            htmlFor="name"
+            className="block text-[10px] tracking-[0.25em] uppercase text-muted mb-3"
+            style={{
+              fontFamily: "var(--font-body), 'Montserrat', sans-serif",
+            }}
+          >
+            Full Name *
+          </label>
+          <input
+            id="name"
+            type="text"
+            required
+            value={formData.name}
+            onChange={(e) =>
+              setFormData({ ...formData, name: e.target.value })
+            }
+            onBlur={(e) => validate("name", e.target.value)}
+            className={inputClass("name")}
+            style={{
+              fontFamily: "var(--font-body), 'Montserrat', sans-serif",
+            }}
+            placeholder="Your name"
+          />
+          {errors.name && (
+            <p className="text-red-400 text-xs mt-1">{errors.name}</p>
+          )}
+        </div>
+        <div>
+          <label
+            htmlFor="phone"
+            className="block text-[10px] tracking-[0.25em] uppercase text-muted mb-3"
+            style={{
+              fontFamily: "var(--font-body), 'Montserrat', sans-serif",
+            }}
+          >
+            Phone *
+          </label>
+          <input
+            id="phone"
+            type="tel"
+            required
+            value={formData.phone}
+            onChange={(e) =>
+              setFormData({ ...formData, phone: e.target.value })
+            }
+            onBlur={(e) => validate("phone", e.target.value)}
+            className={inputClass("phone")}
+            style={{
+              fontFamily: "var(--font-body), 'Montserrat', sans-serif",
+            }}
+            placeholder="(000) 000-0000"
+          />
+          {errors.phone && (
+            <p className="text-red-400 text-xs mt-1">{errors.phone}</p>
+          )}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div>
+          <label
+            htmlFor="email"
+            className="block text-[10px] tracking-[0.25em] uppercase text-muted mb-3"
+            style={{
+              fontFamily: "var(--font-body), 'Montserrat', sans-serif",
+            }}
+          >
+            Email *
+          </label>
+          <input
+            id="email"
+            type="email"
+            required
+            value={formData.email}
+            onChange={(e) =>
+              setFormData({ ...formData, email: e.target.value })
+            }
+            onBlur={(e) => validate("email", e.target.value)}
+            className={inputClass("email")}
+            style={{
+              fontFamily: "var(--font-body), 'Montserrat', sans-serif",
+            }}
+            placeholder="your@email.com"
+          />
+          {errors.email && (
+            <p className="text-red-400 text-xs mt-1">{errors.email}</p>
+          )}
+        </div>
+        <div>
+          <label
+            htmlFor="stoneInterest"
+            className="block text-[10px] tracking-[0.25em] uppercase text-muted mb-3"
+            style={{
+              fontFamily: "var(--font-body), 'Montserrat', sans-serif",
+            }}
+          >
+            Stone Interest *
+          </label>
+          <select
+            id="stoneInterest"
+            required
+            value={formData.stoneInterest}
+            onChange={(e) => {
+              setFormData({ ...formData, stoneInterest: e.target.value });
+              validate("stoneInterest", e.target.value);
+            }}
+            onBlur={(e) => validate("stoneInterest", e.target.value)}
+            className={`${inputClass("stoneInterest")} appearance-none`}
+            style={{
+              fontFamily: "var(--font-body), 'Montserrat', sans-serif",
+            }}
+          >
+            <option value="">Select a stone type</option>
+            <option value="Diamond">Diamond</option>
+            <option value="Sapphire">Sapphire</option>
+            <option value="Emerald">Emerald</option>
+            <option value="Ruby">Ruby</option>
+            <option value="Alexandrite">Alexandrite</option>
+            <option value="Tanzanite">Tanzanite</option>
+            <option value="Other / Not Sure">Other / Not Sure</option>
+          </select>
+          {errors.stoneInterest && (
+            <p className="text-red-400 text-xs mt-1">
+              {errors.stoneInterest}
+            </p>
+          )}
+        </div>
+      </div>
+
+      <div>
+        <label
+          htmlFor="budgetRange"
+          className="block text-[10px] tracking-[0.25em] uppercase text-muted mb-3"
+          style={{
+            fontFamily: "var(--font-body), 'Montserrat', sans-serif",
+          }}
+        >
+          Budget Range
+        </label>
+        <select
+          id="budgetRange"
+          value={formData.budgetRange}
+          onChange={(e) =>
+            setFormData({ ...formData, budgetRange: e.target.value })
+          }
+          className={`${inputClass("budgetRange")} appearance-none`}
+          style={{
+            fontFamily: "var(--font-body), 'Montserrat', sans-serif",
+          }}
+        >
+          <option value="">Prefer not to say</option>
+          <option value="Under $10,000">Under $10,000</option>
+          <option value="$10,000 – $50,000">$10,000 – $50,000</option>
+          <option value="$50,000 – $200,000">$50,000 – $200,000</option>
+          <option value="$200,000+">$200,000+</option>
+        </select>
+      </div>
+
+      <div>
+        <label
+          htmlFor="message"
+          className="block text-[10px] tracking-[0.25em] uppercase text-muted mb-3"
+          style={{
+            fontFamily: "var(--font-body), 'Montserrat', sans-serif",
+          }}
+        >
+          Message
+        </label>
+        <textarea
+          id="message"
+          rows={5}
+          value={formData.message}
+          onChange={(e) =>
+            setFormData({ ...formData, message: e.target.value })
+          }
+          className={inputClass("message")}
+          style={{
+            fontFamily: "var(--font-body), 'Montserrat', sans-serif",
+          }}
+          placeholder="Tell us what you're looking for — we source stones globally and work entirely to your specifications."
+        />
+      </div>
+
+      <button
+        type="submit"
+        disabled={status === "submitting"}
+        className="btn-gold-shimmer bg-gold text-white px-12 py-4 text-[11px] tracking-[0.25em] uppercase hover:bg-gold/90 transition-colors duration-500 disabled:opacity-50 disabled:cursor-not-allowed glow-pulse"
+        style={{
+          fontFamily: "var(--font-body), 'Montserrat', sans-serif",
+          fontWeight: 400,
+        }}
+      >
+        {status === "submitting" ? (
+          <span className="flex items-center gap-2">
+            <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+                fill="none"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              />
+            </svg>
+            Sending...
+          </span>
+        ) : (
+          "Send Inquiry"
+        )}
+      </button>
+    </motion.form>
   );
 }

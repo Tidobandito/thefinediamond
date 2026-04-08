@@ -1,124 +1,171 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Image from "next/image";
-import Link from "next/link";
 
-const ease = [0.22, 1, 0.36, 1] as [number, number, number, number];
+const fadeUp = {
+  hidden: { opacity: 0, y: 40 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.8,
+      delay: i * 0.15,
+      ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
+    },
+  }),
+};
 
 export default function DiamondsPage() {
   return (
-    <main className="bg-black min-h-screen">
+    <main className="bg-white min-h-screen">
       {/* Hero */}
-      <section className="relative pt-40 pb-24 overflow-hidden">
-        {/* Background image */}
-        <Image
-          src="https://images.unsplash.com/photo-1586882829491-b81178aa622e?w=1920&q=80&auto=format"
-          alt="Brilliant diamonds"
-          fill
-          className="object-cover opacity-15"
-          sizes="100vw"
-          priority
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/90 to-black" />
-        {/* Ambient glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-gold/[0.03] blur-[200px] pointer-events-none" />
-
-        <div className="relative max-w-[1400px] mx-auto px-8 lg:px-12 text-center">
+      <section className="pt-32 pb-16 bg-white">
+        <div className="max-w-[1400px] mx-auto px-8 lg:px-12 text-center">
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: 60 }}
+            transition={{
+              duration: 1.5,
+              delay: 0.3,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+            className="h-[1px] bg-gold mx-auto mb-8"
+          />
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease }}
-            className="text-[11px] tracking-[0.5em] uppercase text-gold/60 mb-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 0.5 }}
+            className="text-gold/60 text-[11px] tracking-[0.5em] uppercase mb-6"
+            style={{
+              fontFamily: "var(--font-body), 'Montserrat', sans-serif",
+            }}
           >
-            Exceptional Stones
+            Search &amp; Discover
           </motion.p>
           <motion.h1
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.1, ease }}
-            className="font-heading text-white text-4xl md:text-5xl lg:text-6xl tracking-tight mb-6"
+            transition={{
+              duration: 1,
+              delay: 0.7,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+            className="text-navy text-5xl md:text-6xl tracking-tight mb-6"
+            style={{
+              fontFamily:
+                "var(--font-display), 'Cormorant Garamond', Georgia, serif",
+            }}
           >
             The Collection
           </motion.h1>
-          <motion.div
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ duration: 1, delay: 0.3, ease }}
-            className="w-16 h-[1px] bg-gold/40 mx-auto mb-8"
-          />
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4, ease }}
-            className="text-white/35 max-w-2xl mx-auto text-base font-light leading-relaxed"
+            transition={{ duration: 1, delay: 0.9 }}
+            className="text-muted max-w-xl mx-auto text-base leading-relaxed mb-4"
+            style={{
+              fontFamily: "var(--font-body), 'Montserrat', sans-serif",
+              fontWeight: 300,
+            }}
           >
-            Every diamond in our collection is hand-selected for exceptional brilliance,
-            fire, and beauty. Browse our curated inventory and find the perfect stone.
+            Browse our full inventory of diamonds, gemstones, fine jewelry, and
+            bespoke pieces. Use the search tools below to find exactly what
+            you&apos;re looking for.
+          </motion.p>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 1.1 }}
+            className="text-gold/50 text-[11px] tracking-[0.2em] uppercase"
+            style={{
+              fontFamily: "var(--font-body), 'Montserrat', sans-serif",
+            }}
+          >
+            Can&apos;t find what you need? Call{" "}
+            <a
+              href="tel:7862301333"
+              className="text-gold hover:text-gold/80 transition-colors"
+            >
+              786-230-1333
+            </a>{" "}
+            for a private consultation
           </motion.p>
         </div>
       </section>
 
-      {/* Diamond Search Engine */}
-      <section className="relative">
-        {/* Top divider */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent z-10" />
-
+      {/* JewelerShowcase Search Engine Embed */}
+      <section className="pb-16 bg-white">
         <div className="max-w-[1400px] mx-auto px-4 lg:px-8">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6, ease }}
+            transition={{ duration: 0.8, delay: 1.2 }}
+            className="w-full border border-navy/5 overflow-hidden"
           >
             <iframe
               src="https://thefinediamond-frame.jewelershowcase.com"
+              title="The Fine Diamond — Gemstone Search Engine"
               width="100%"
               height="1500"
-              frameBorder="0"
-              scrolling="yes"
-              sandbox="allow-scripts allow-forms allow-same-origin"
-              className="w-full min-w-full border-0"
-              style={{ minWidth: "100%" }}
-              title="Diamond Search — The Fine Diamond"
+              sandbox="allow-scripts allow-forms allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+              loading="lazy"
+              className="w-full border-0"
+              style={{ minHeight: "1500px" }}
             />
           </motion.div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="relative py-32">
-        {/* Top divider */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-
-        {/* Ambient glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-gold/[0.03] blur-[200px] pointer-events-none" />
-
-        <div className="relative max-w-3xl mx-auto px-8 lg:px-12 text-center">
-          <p className="text-[11px] tracking-[0.5em] uppercase text-gold/60 mb-6">
-            Bespoke Service
-          </p>
-          <h2 className="font-heading text-white text-3xl md:text-4xl lg:text-5xl tracking-tight mb-4">
-            Can&rsquo;t Find What You&rsquo;re Looking For?
-          </h2>
-          <div className="w-16 h-[1px] bg-gold/40 mx-auto mt-4 mb-8" />
-          <p className="text-white/35 text-base font-light leading-relaxed max-w-xl mx-auto mb-12">
-            Our diamond specialists can source any stone to your exact specifications.
-            Tell us what you need and we&rsquo;ll find it.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link
+      {/* Bottom CTA */}
+      <section className="py-20 bg-white">
+        <div className="max-w-3xl mx-auto px-8 text-center">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
+            <motion.div
+              variants={fadeUp}
+              custom={0}
+              className="w-12 h-[1px] bg-gold mx-auto mb-8"
+            />
+            <motion.h2
+              variants={fadeUp}
+              custom={1}
+              className="text-navy text-3xl md:text-4xl tracking-tight mb-4"
+              style={{
+                fontFamily:
+                  "var(--font-display), 'Cormorant Garamond', Georgia, serif",
+              }}
+            >
+              Looking for Something Specific?
+            </motion.h2>
+            <motion.p
+              variants={fadeUp}
+              custom={2}
+              className="text-muted text-base leading-relaxed mb-8"
+              style={{
+                fontFamily: "var(--font-body), 'Montserrat', sans-serif",
+                fontWeight: 300,
+              }}
+            >
+              Matt sources stones globally and has access to inventory far
+              beyond what&apos;s shown here. Tell us what you&apos;re looking
+              for and we&apos;ll find it.
+            </motion.p>
+            <motion.a
+              variants={fadeUp}
+              custom={3}
               href="/contact"
-              className="px-10 py-4 text-[10px] tracking-[0.2em] uppercase bg-gold text-black font-medium hover:bg-gold/90 transition-all duration-500"
+              className="btn-gold-shimmer inline-block px-10 py-4 text-[12px] tracking-[0.25em] uppercase bg-gold text-white hover:bg-gold/90 transition-all duration-500 glow-pulse"
+              style={{
+                fontFamily: "var(--font-body), 'Montserrat', sans-serif",
+                fontWeight: 400,
+              }}
             >
-              Contact a Specialist
-            </Link>
-            <Link
-              href="/custom-design"
-              className="px-10 py-4 text-[10px] tracking-[0.2em] uppercase border border-white/[0.12] text-white/50 hover:border-white/[0.25] hover:text-white/80 transition-all duration-500"
-            >
-              Start Custom Design
-            </Link>
-          </div>
+              Request a Private Search
+            </motion.a>
+          </motion.div>
         </div>
       </section>
     </main>

@@ -1,50 +1,56 @@
 import type { Metadata } from "next";
-import { Playfair_Display, DM_Sans } from "next/font/google";
+import { Cormorant_Garamond, Montserrat } from "next/font/google";
 import "./globals.css";
 import Navigation from "@/components/layout/Navigation";
 import Footer from "@/components/layout/Footer";
+import LoadingScreen from "@/components/ui/LoadingScreen";
 
-const playfair = Playfair_Display({
-  variable: "--font-playfair",
+const cormorant = Cormorant_Garamond({
+  variable: "--font-display",
   subsets: ["latin"],
   display: "swap",
+  weight: ["300", "400", "600"],
+  style: ["normal", "italic"],
 });
 
-const dmSans = DM_Sans({
-  variable: "--font-dm-sans",
+const montserrat = Montserrat({
+  variable: "--font-body",
   subsets: ["latin"],
   display: "swap",
+  weight: ["300", "400", "500"],
 });
 
 export const metadata: Metadata = {
   title: {
-    default: "The Fine Diamond | Direct from Source. Designed for You.",
+    default: "The Fine Diamond | Private Luxury Gemstone Dealer — Las Vegas",
     template: "%s | The Fine Diamond",
   },
   description:
-    "Exceptional loose diamonds direct from our cutting facilities. Custom 3D CAD jewelry design. Below retail pricing with full GIA certification.",
+    "Private luxury gemstone dealer in Las Vegas specializing in rare diamonds, sapphires, emeralds, and collector stones. Bespoke jewelry sourced globally.",
   keywords: [
-    "diamonds",
-    "loose diamonds",
-    "custom jewelry",
-    "CAD design",
-    "engagement rings",
-    "GIA certified",
-    "direct diamond",
+    "luxury diamonds",
+    "rare gemstones",
+    "bespoke jewelry",
+    "Las Vegas jeweler",
+    "sapphires",
+    "emeralds",
+    "rubies",
+    "collector stones",
+    "private jeweler",
   ],
   openGraph: {
     type: "website",
     locale: "en_US",
     siteName: "The Fine Diamond",
-    title: "The Fine Diamond | Direct from Source. Designed for You.",
+    title: "The Fine Diamond | Private Luxury Gemstone Dealer — Las Vegas",
     description:
-      "Exceptional loose diamonds direct from our cutting facilities. Custom 3D CAD jewelry design.",
+      "Private luxury gemstone dealer specializing in rare diamonds, sapphires, emeralds, and collector stones. Bespoke jewelry sourced globally.",
   },
   twitter: {
     card: "summary_large_image",
     title: "The Fine Diamond",
     description:
-      "Exceptional loose diamonds direct from our cutting facilities. Custom 3D CAD jewelry design.",
+      "Private luxury gemstone dealer specializing in rare diamonds, sapphires, emeralds, and collector stones.",
   },
   robots: {
     index: true,
@@ -60,9 +66,36 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${playfair.variable} ${dmSans.variable} h-full antialiased`}
+      className={`${cormorant.variable} ${montserrat.variable} h-full antialiased`}
     >
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "JewelryStore",
+              name: "The Fine Diamond",
+              url: "https://www.thefinediamond.com",
+              telephone: "+17862301333",
+              email: "matt@thefinediamond.com",
+              address: {
+                "@type": "PostalAddress",
+                streetAddress: "3726 S. Las Vegas Blvd.",
+                addressLocality: "Las Vegas",
+                addressRegion: "NV",
+                postalCode: "89158",
+                addressCountry: "US",
+              },
+              priceRange: "$$$$",
+              description:
+                "Private luxury gemstone dealer specializing in rare diamonds, sapphires, emeralds, and collector stones. Bespoke jewelry sourced globally.",
+            }),
+          }}
+        />
+      </head>
       <body className="min-h-full flex flex-col">
+        <LoadingScreen />
         <Navigation />
         <main className="flex-1">{children}</main>
         <Footer />

@@ -2,18 +2,19 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 
 const navLinks = [
   { href: "/diamonds", label: "Diamonds" },
+  { href: "/gallery", label: "Gallery" },
   { href: "/custom-design", label: "Custom Design" },
-  { href: "/collections", label: "Collections" },
   { href: "/about", label: "Our Story" },
 ];
 
 export default function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const { scrollYProgress } = useScroll();
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 80);
@@ -34,68 +35,77 @@ export default function Navigation() {
         transition={{ duration: 1, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-700 ${
           isScrolled
-            ? "bg-black/60 backdrop-blur-2xl border-b border-white/[0.04]"
-            : "bg-transparent"
+            ? "bg-white/95 backdrop-blur-xl shadow-sm border-b border-gold/10"
+            : "bg-white"
         }`}
       >
+        {/* Scroll progress bar */}
+        <motion.div
+          style={{ scaleX: scrollYProgress }}
+          className="absolute bottom-0 left-0 right-0 h-[2px] bg-gold origin-left"
+        />
         <nav className="max-w-[1400px] mx-auto px-8 lg:px-12">
-          <div className="flex items-center justify-between h-24">
+          <div className="flex items-center justify-between h-20">
             {/* Logo */}
             <Link href="/" className="flex-shrink-0 group">
-              <span className="font-heading text-[22px] tracking-[0.35em] text-white group-hover:text-gold transition-colors duration-500">
+              <span className="font-[var(--font-display)] text-[20px] tracking-[0.35em] text-navy group-hover:text-gold transition-colors duration-500 uppercase" style={{ fontFamily: "var(--font-display), 'Cormorant Garamond', Georgia, serif" }}>
                 THE FINE DIAMOND
               </span>
             </Link>
 
-            {/* Desktop Nav — center */}
+            {/* Desktop Nav */}
             <div className="hidden lg:flex items-center gap-12">
               {navLinks.map((link) => (
-                <Link
+                <motion.div
                   key={link.href}
-                  href={link.href}
-                  className="relative text-white/50 hover:text-white text-[11px] tracking-[0.25em] uppercase transition-colors duration-500 py-2 group"
+                  whileHover={{ y: -1 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 25 }}
                 >
-                  {link.label}
-                  <span className="absolute bottom-0 left-0 w-0 h-px bg-gold group-hover:w-full transition-all duration-500" />
-                </Link>
+                  <Link
+                    href={link.href}
+                    className="relative text-muted hover:text-navy text-[11px] tracking-[0.25em] uppercase transition-colors duration-500 py-2 group"
+                  >
+                    {link.label}
+                    <span className="absolute bottom-0 left-0 w-0 h-px bg-gold group-hover:w-full transition-all duration-500" />
+                  </Link>
+                </motion.div>
               ))}
             </div>
 
             {/* Right side */}
             <div className="hidden lg:flex items-center gap-8">
+              <a
+                href="tel:+17862301333"
+                className="text-muted hover:text-navy text-[11px] tracking-[0.15em] transition-colors duration-500"
+              >
+                786-230-1333
+              </a>
               <Link
                 href="/contact"
-                className="text-white/50 hover:text-white text-[11px] tracking-[0.25em] uppercase transition-colors duration-500"
+                className="btn-gold-shimmer relative overflow-hidden border border-gold text-gold px-7 py-3 text-[10px] tracking-[0.25em] uppercase hover:bg-gold hover:text-white transition-all duration-500 group"
               >
-                Contact
-              </Link>
-              <Link
-                href="/contact"
-                className="relative overflow-hidden border border-gold/40 text-gold px-7 py-3 text-[10px] tracking-[0.25em] uppercase hover:bg-gold hover:text-black transition-all duration-500 group"
-              >
-                <span className="relative z-10">Schedule a Visit</span>
-                <div className="absolute inset-0 bg-gold/0 group-hover:bg-gold transition-colors duration-500" />
+                <span className="relative z-10">Inquire</span>
               </Link>
             </div>
 
             {/* Mobile hamburger */}
             <button
               onClick={() => setIsMobileOpen(!isMobileOpen)}
-              className="lg:hidden text-white p-3"
+              className="lg:hidden text-navy p-3"
               aria-label={isMobileOpen ? "Close menu" : "Open menu"}
             >
               <div className="w-7 h-5 relative flex flex-col justify-between">
                 <motion.span
                   animate={isMobileOpen ? { rotate: 45, y: 8 } : { rotate: 0, y: 0 }}
-                  className="w-full h-[1px] bg-white origin-left"
+                  className="w-full h-[1px] bg-navy origin-left"
                 />
                 <motion.span
                   animate={isMobileOpen ? { opacity: 0, x: -20 } : { opacity: 1, x: 0 }}
-                  className="w-full h-[1px] bg-white"
+                  className="w-full h-[1px] bg-navy"
                 />
                 <motion.span
                   animate={isMobileOpen ? { rotate: -45, y: -8 } : { rotate: 0, y: 0 }}
-                  className="w-full h-[1px] bg-white origin-left"
+                  className="w-full h-[1px] bg-navy origin-left"
                 />
               </div>
             </button>
@@ -111,11 +121,8 @@ export default function Navigation() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5 }}
-            className="fixed inset-0 z-40 bg-black/95 backdrop-blur-3xl flex flex-col items-center justify-center"
+            className="fixed inset-0 z-40 bg-white flex flex-col items-center justify-center"
           >
-            {/* Decorative glow */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] rounded-full bg-gold/5 blur-[100px]" />
-
             <nav className="relative z-10 flex flex-col items-center gap-10">
               {navLinks.map((link, index) => (
                 <motion.div
@@ -127,7 +134,8 @@ export default function Navigation() {
                   <Link
                     href={link.href}
                     onClick={() => setIsMobileOpen(false)}
-                    className="font-heading text-white text-4xl tracking-[0.15em] hover:text-gold transition-colors duration-500"
+                    className="text-navy text-4xl tracking-[0.15em] hover:text-gold transition-colors duration-500"
+                    style={{ fontFamily: "var(--font-display), 'Cormorant Garamond', Georgia, serif" }}
                   >
                     {link.label}
                   </Link>
@@ -141,7 +149,8 @@ export default function Navigation() {
                 <Link
                   href="/contact"
                   onClick={() => setIsMobileOpen(false)}
-                  className="font-heading text-white text-4xl tracking-[0.15em] hover:text-gold transition-colors duration-500"
+                  className="text-navy text-4xl tracking-[0.15em] hover:text-gold transition-colors duration-500"
+                  style={{ fontFamily: "var(--font-display), 'Cormorant Garamond', Georgia, serif" }}
                 >
                   Contact
                 </Link>
@@ -152,13 +161,12 @@ export default function Navigation() {
                 transition={{ delay: 0.6 }}
                 className="mt-8"
               >
-                <Link
-                  href="/contact"
-                  onClick={() => setIsMobileOpen(false)}
-                  className="border border-gold/40 text-gold px-10 py-4 text-[11px] tracking-[0.3em] uppercase hover:bg-gold hover:text-black transition-all duration-500"
+                <a
+                  href="tel:+17862301333"
+                  className="text-gold text-lg tracking-[0.15em]"
                 >
-                  Schedule a Visit
-                </Link>
+                  786-230-1333
+                </a>
               </motion.div>
             </nav>
 
@@ -169,8 +177,8 @@ export default function Navigation() {
               transition={{ delay: 0.8 }}
               className="absolute bottom-12 text-center"
             >
-              <p className="text-white/20 text-[10px] tracking-[0.3em] uppercase">
-                Birmingham, Alabama
+              <p className="text-muted text-[10px] tracking-[0.3em] uppercase">
+                Las Vegas, Nevada
               </p>
             </motion.div>
           </motion.div>

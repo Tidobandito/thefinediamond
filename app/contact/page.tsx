@@ -1,78 +1,282 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
-import Image from "next/image";
-import Link from "next/link";
 
 const ease = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
-const inquiryTypes = [
-  "General Inquiry",
-  "Diamond Acquisition",
-  "Custom Commission",
-  "Existing Order",
-  "Private Viewing",
-];
+function ContactForm() {
+  const searchParams = useSearchParams();
+  const prefilledStone = searchParams.get("stone") || "";
 
-export default function ContactPage() {
   const [formData, setFormData] = useState({
     name: "",
-    email: "",
     phone: "",
-    inquiryType: "",
+    email: "",
+    stoneInterest: prefilledStone,
+    budgetRange: "",
     message: "",
   });
-  const [submitted, setSubmitted] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmitted(true);
+  useEffect(() => {
+    if (prefilledStone) {
+      setFormData((prev) => ({ ...prev, stoneInterest: prefilledStone }));
+    }
+  }, [prefilledStone]);
+
+  const validate = (field: string, value: string) => {
+    const newErrors = { ...errors };
+    if (field === "name" && !value.trim()) newErrors.name = "Full name is required.";
+    else if (field === "name") delete newErrors.name;
+
+    if (field === "phone" && !value.trim()) newErrors.phone = "Phone number is required.";
+    else if (field === "phone") delete newErrors.phone;
+
+    if (field === "email") {
+      if (!value.trim()) newErrors.email = "Email is required.";
+      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) newErrors.email = "Please enter a valid email.";
+      else delete newErrors.email;
+    }
+
+    if (field === "stoneInterest" && !value) newErrors.stoneInterest = "Please select a stone type.";
+    else if (field === "stoneInterest") delete newErrors.stoneInterest;
+
+    setErrors(newErrors);
   };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const newErrors: Record<string, string> = {};
+    if (!formData.name.trim()) newErrors.name = "Full name is required.";
+    if (!formData.phone.trim()) newErrors.phone = "Phone number is required.";
+    if (!formData.email.trim()) newErrors.email = "Email is required.";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = "Please enter a valid email.";
+    if (!formData.stoneInterest) newErrors.stoneInterest = "Please select a stone type.";
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    setStatus("submitting");
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      if (res.ok) {
+        setStatus("success");
+      } else {
+        setStatus("error");
+      }
+    } catch {
+      setStatus("error");
+    }
+  };
+
+  if (status === "success") {
+    return (
+      <div className="text-center py-16">
+        <div className="w-16 h-[1px] bg-gold mx-auto mb-8" />
+        <h3 className="text-navy text-3xl mb-4" style={{ fontFamily: "var(--font-display), 'Cormorant Garamond', Georgia, serif" }}>
+          Thank You
+        </h3>
+        <p className="text-muted" style={{ fontFamily: "var(--font-body), 'Montserrat', sans-serif", fontWeight: 300 }}>
+          Thank you. Matt will be in touch within 24 hours.
+        </p>
+      </div>
+    );
+  }
+
+  const inputClass = (field: string) =>
+    `w-full px-4 py-3 bg-white border ${
+      errors[field] ? "border-red-400" : "border-navy/10"
+    } text-navy text-sm focus:outline-none focus:border-gold transition-colors duration-500`;
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-6">
+      {status === "error" && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-6 py-4 text-sm">
+          Something went wrong. Please call us at 786-230-1333 or email matt@thefinediamond.com directly.
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div>
+          <label htmlFor="c-name" className="block text-[10px] tracking-[0.25em] uppercase text-muted mb-3" style={{ fontFamily: "var(--font-body), 'Montserrat', sans-serif" }}>
+            Full Name *
+          </label>
+          <input
+            id="c-name"
+            type="text"
+            required
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            onBlur={(e) => validate("name", e.target.value)}
+            className={inputClass("name")}
+            style={{ fontFamily: "var(--font-body), 'Montserrat', sans-serif" }}
+            placeholder="Your name"
+          />
+          {errors.name && <p className="text-red-400 text-xs mt-1">{errors.name}</p>}
+        </div>
+        <div>
+          <label htmlFor="c-phone" className="block text-[10px] tracking-[0.25em] uppercase text-muted mb-3" style={{ fontFamily: "var(--font-body), 'Montserrat', sans-serif" }}>
+            Phone *
+          </label>
+          <input
+            id="c-phone"
+            type="tel"
+            required
+            value={formData.phone}
+            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+            onBlur={(e) => validate("phone", e.target.value)}
+            className={inputClass("phone")}
+            style={{ fontFamily: "var(--font-body), 'Montserrat', sans-serif" }}
+            placeholder="(000) 000-0000"
+          />
+          {errors.phone && <p className="text-red-400 text-xs mt-1">{errors.phone}</p>}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div>
+          <label htmlFor="c-email" className="block text-[10px] tracking-[0.25em] uppercase text-muted mb-3" style={{ fontFamily: "var(--font-body), 'Montserrat', sans-serif" }}>
+            Email *
+          </label>
+          <input
+            id="c-email"
+            type="email"
+            required
+            value={formData.email}
+            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            onBlur={(e) => validate("email", e.target.value)}
+            className={inputClass("email")}
+            style={{ fontFamily: "var(--font-body), 'Montserrat', sans-serif" }}
+            placeholder="your@email.com"
+          />
+          {errors.email && <p className="text-red-400 text-xs mt-1">{errors.email}</p>}
+        </div>
+        <div>
+          <label htmlFor="c-stone" className="block text-[10px] tracking-[0.25em] uppercase text-muted mb-3" style={{ fontFamily: "var(--font-body), 'Montserrat', sans-serif" }}>
+            Stone Interest *
+          </label>
+          <select
+            id="c-stone"
+            required
+            value={formData.stoneInterest}
+            onChange={(e) => { setFormData({ ...formData, stoneInterest: e.target.value }); validate("stoneInterest", e.target.value); }}
+            onBlur={(e) => validate("stoneInterest", e.target.value)}
+            className={`${inputClass("stoneInterest")} appearance-none`}
+            style={{ fontFamily: "var(--font-body), 'Montserrat', sans-serif" }}
+          >
+            <option value="">Select a stone type</option>
+            <option value="Diamond">Diamond</option>
+            <option value="Sapphire">Sapphire</option>
+            <option value="Emerald">Emerald</option>
+            <option value="Ruby">Ruby</option>
+            <option value="Alexandrite">Alexandrite</option>
+            <option value="Tanzanite">Tanzanite</option>
+            <option value="Other / Not Sure">Other / Not Sure</option>
+          </select>
+          {errors.stoneInterest && <p className="text-red-400 text-xs mt-1">{errors.stoneInterest}</p>}
+        </div>
+      </div>
+
+      <div>
+        <label htmlFor="c-budget" className="block text-[10px] tracking-[0.25em] uppercase text-muted mb-3" style={{ fontFamily: "var(--font-body), 'Montserrat', sans-serif" }}>
+          Budget Range
+        </label>
+        <select
+          id="c-budget"
+          value={formData.budgetRange}
+          onChange={(e) => setFormData({ ...formData, budgetRange: e.target.value })}
+          className={`${inputClass("budgetRange")} appearance-none`}
+          style={{ fontFamily: "var(--font-body), 'Montserrat', sans-serif" }}
+        >
+          <option value="">Prefer not to say</option>
+          <option value="Under $10,000">Under $10,000</option>
+          <option value="$10,000 – $50,000">$10,000 – $50,000</option>
+          <option value="$50,000 – $200,000">$50,000 – $200,000</option>
+          <option value="$200,000+">$200,000+</option>
+        </select>
+      </div>
+
+      <div>
+        <label htmlFor="c-message" className="block text-[10px] tracking-[0.25em] uppercase text-muted mb-3" style={{ fontFamily: "var(--font-body), 'Montserrat', sans-serif" }}>
+          Message
+        </label>
+        <textarea
+          id="c-message"
+          rows={5}
+          value={formData.message}
+          onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+          className={inputClass("message")}
+          style={{ fontFamily: "var(--font-body), 'Montserrat', sans-serif" }}
+          placeholder="Tell us what you're looking for — we source stones globally and work entirely to your specifications."
+        />
+      </div>
+
+      <button
+        type="submit"
+        disabled={status === "submitting"}
+        className="bg-gold text-white px-12 py-4 text-[11px] tracking-[0.25em] uppercase hover:bg-gold/90 transition-colors duration-500 disabled:opacity-50 disabled:cursor-not-allowed glow-pulse"
+        style={{ fontFamily: "var(--font-body), 'Montserrat', sans-serif", fontWeight: 400 }}
+      >
+        {status === "submitting" ? (
+          <span className="flex items-center gap-2">
+            <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+            </svg>
+            Sending...
+          </span>
+        ) : (
+          "Send Inquiry"
+        )}
+      </button>
+    </form>
+  );
+}
+
+export default function ContactPage() {
   return (
     <>
       {/* Hero */}
-      <section className="relative bg-black pt-40 pb-24 overflow-hidden">
-        {/* Background image */}
-        <Image
-          src="https://images.unsplash.com/photo-1615655406736-b37c4fabf923?w=1920&q=80&auto=format"
-          alt="Luxury diamond jewelry"
-          fill
-          className="object-cover opacity-20"
-          sizes="100vw"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/80 to-black" />
-        <div className="absolute top-1/2 right-1/4 w-[500px] h-[500px] rounded-full bg-gold/[0.03] blur-[200px]" />
-
-        <div className="max-w-[1400px] mx-auto px-8 lg:px-12 relative z-10 text-center">
+      <section className="pt-32 pb-16 bg-white">
+        <div className="max-w-[1400px] mx-auto px-8 lg:px-12 text-center">
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: 60 }}
-            transition={{ duration: 1.5, delay: 0.5, ease }}
-            className="h-[1px] bg-gold/40 mx-auto mb-8"
+            transition={{ duration: 1.5, delay: 0.3, ease }}
+            className="h-[1px] bg-gold mx-auto mb-8"
           />
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 0.8 }}
+            transition={{ duration: 1, delay: 0.5 }}
             className="text-gold/60 text-[11px] tracking-[0.5em] uppercase mb-6"
+            style={{ fontFamily: "var(--font-body), 'Montserrat', sans-serif" }}
           >
             Get in Touch
           </motion.p>
           <motion.h1
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 1, ease }}
-            className="font-heading text-white text-5xl md:text-6xl tracking-tight mb-6"
+            transition={{ duration: 1, delay: 0.7, ease }}
+            className="text-navy text-5xl md:text-6xl tracking-tight mb-6"
+            style={{ fontFamily: "var(--font-display), 'Cormorant Garamond', Georgia, serif" }}
           >
             Begin the <span className="italic text-gold">Conversation</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 1.3 }}
-            className="text-white/30 text-lg max-w-xl mx-auto font-light"
+            transition={{ duration: 1, delay: 0.9 }}
+            className="text-muted text-lg max-w-xl mx-auto"
+            style={{ fontFamily: "var(--font-body), 'Montserrat', sans-serif", fontWeight: 300 }}
           >
             Whether you&apos;re seeking the perfect stone or ready to commission
             a bespoke piece, we&apos;re here.
@@ -81,9 +285,7 @@ export default function ContactPage() {
       </section>
 
       {/* Contact Content */}
-      <section className="relative py-32 bg-[#060608]">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-
+      <section className="pb-32 bg-white">
         <div className="max-w-[1400px] mx-auto px-8 lg:px-12">
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-20">
             {/* Form */}
@@ -93,117 +295,11 @@ export default function ContactPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, ease }}
-                className="glass-gold p-10 md:p-14"
+                className="border border-navy/5 p-10 md:p-14"
               >
-                {submitted ? (
-                  <div className="text-center py-16">
-                    <div className="w-16 h-[1px] bg-gold/40 mx-auto mb-8" />
-                    <h3 className="font-heading text-white text-3xl mb-4">
-                      Thank You
-                    </h3>
-                    <p className="text-white/30 font-light">
-                      We&apos;ve received your message and will be in touch
-                      within one business day.
-                    </p>
-                  </div>
-                ) : (
-                  <form onSubmit={handleSubmit} className="space-y-8">
-                    <div>
-                      <span className="text-gold/60 text-[11px] tracking-[0.5em] uppercase block mb-2">
-                        Your Inquiry
-                      </span>
-                      <div className="w-12 h-[1px] bg-gold/30 mb-8" />
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-                      <div>
-                        <label htmlFor="name" className="block text-[10px] tracking-[0.25em] uppercase text-white/20 mb-3">
-                          Full Name *
-                        </label>
-                        <input
-                          id="name"
-                          type="text"
-                          required
-                          value={formData.name}
-                          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                          className="w-full px-0 py-3 bg-transparent border-0 border-b border-white/[0.08] text-white text-sm focus:outline-none focus:border-gold/40 transition-colors duration-500 placeholder-white/10"
-                          placeholder="Your name"
-                        />
-                      </div>
-                      <div>
-                        <label htmlFor="email" className="block text-[10px] tracking-[0.25em] uppercase text-white/20 mb-3">
-                          Email *
-                        </label>
-                        <input
-                          id="email"
-                          type="email"
-                          required
-                          value={formData.email}
-                          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                          className="w-full px-0 py-3 bg-transparent border-0 border-b border-white/[0.08] text-white text-sm focus:outline-none focus:border-gold/40 transition-colors duration-500 placeholder-white/10"
-                          placeholder="your@email.com"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-                      <div>
-                        <label htmlFor="phone" className="block text-[10px] tracking-[0.25em] uppercase text-white/20 mb-3">
-                          Phone
-                        </label>
-                        <input
-                          id="phone"
-                          type="tel"
-                          value={formData.phone}
-                          onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                          className="w-full px-0 py-3 bg-transparent border-0 border-b border-white/[0.08] text-white text-sm focus:outline-none focus:border-gold/40 transition-colors duration-500 placeholder-white/10"
-                          placeholder="(000) 000-0000"
-                        />
-                      </div>
-                      <div>
-                        <label htmlFor="inquiry" className="block text-[10px] tracking-[0.25em] uppercase text-white/20 mb-3">
-                          Inquiry Type *
-                        </label>
-                        <select
-                          id="inquiry"
-                          required
-                          value={formData.inquiryType}
-                          onChange={(e) => setFormData({ ...formData, inquiryType: e.target.value })}
-                          className="w-full px-0 py-3 bg-transparent border-0 border-b border-white/[0.08] text-white text-sm focus:outline-none focus:border-gold/40 transition-colors duration-500 appearance-none"
-                        >
-                          <option value="" className="bg-black">Select</option>
-                          {inquiryTypes.map((type) => (
-                            <option key={type} value={type} className="bg-black">
-                              {type}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
-
-                    <div>
-                      <label htmlFor="message" className="block text-[10px] tracking-[0.25em] uppercase text-white/20 mb-3">
-                        Message *
-                      </label>
-                      <textarea
-                        id="message"
-                        required
-                        rows={5}
-                        value={formData.message}
-                        onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                        className="w-full px-0 py-3 bg-transparent border-0 border-b border-white/[0.08] text-white text-sm focus:outline-none focus:border-gold/40 transition-colors duration-500 resize-none placeholder-white/10"
-                        placeholder="Tell us about your vision..."
-                      />
-                    </div>
-
-                    <button
-                      type="submit"
-                      className="bg-gold text-black px-12 py-4 text-[11px] tracking-[0.25em] uppercase font-medium hover:bg-gold-light transition-colors duration-500 glow-pulse"
-                    >
-                      Send Inquiry
-                    </button>
-                  </form>
-                )}
+                <Suspense fallback={<div className="py-16 text-center text-muted">Loading form...</div>}>
+                  <ContactForm />
+                </Suspense>
               </motion.div>
             </div>
 
@@ -216,54 +312,57 @@ export default function ContactPage() {
                 transition={{ duration: 0.8, delay: 0.2, ease }}
                 className="space-y-12"
               >
-                {[
-                  { label: "Call", content: <a href="tel:+12055551234" className="font-heading text-white text-2xl hover:text-gold transition-colors duration-500">(205) 555-1234</a> },
-                  { label: "Email", content: <a href="mailto:info@thefinediamond.com" className="text-white/50 hover:text-gold transition-colors duration-500">info@thefinediamond.com</a> },
-                  { label: "Location", content: <p className="text-white/30 font-light">Birmingham, Alabama</p> },
-                ].map((item) => (
-                  <div key={item.label}>
-                    <span className="text-gold/40 text-[10px] tracking-[0.3em] uppercase block mb-4">
-                      {item.label}
-                    </span>
-                    {item.content}
-                  </div>
-                ))}
-
                 <div>
-                  <span className="text-gold/40 text-[10px] tracking-[0.3em] uppercase block mb-4">
-                    Hours
+                  <span className="text-gold/60 text-[10px] tracking-[0.3em] uppercase block mb-4" style={{ fontFamily: "var(--font-body), 'Montserrat', sans-serif" }}>
+                    Call
                   </span>
-                  <div className="space-y-2 text-white/25 text-sm font-light">
-                    <div className="flex justify-between">
-                      <span>Mon — Fri</span>
-                      <span className="text-white/40">10am — 6pm</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Saturday</span>
-                      <span className="text-white/40">By Appointment</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Sunday</span>
-                      <span className="text-white/40">Closed</span>
-                    </div>
-                  </div>
+                  <a
+                    href="tel:+17862301333"
+                    className="text-navy text-2xl hover:text-gold transition-colors duration-500"
+                    style={{ fontFamily: "var(--font-display), 'Cormorant Garamond', Georgia, serif" }}
+                  >
+                    786-230-1333
+                  </a>
                 </div>
 
-                {/* Private Viewing Card */}
-                <div className="glass p-8">
-                  <span className="text-gold/40 text-[10px] tracking-[0.3em] uppercase block mb-4">
+                <div>
+                  <span className="text-gold/60 text-[10px] tracking-[0.3em] uppercase block mb-4" style={{ fontFamily: "var(--font-body), 'Montserrat', sans-serif" }}>
+                    Email
+                  </span>
+                  <a
+                    href="mailto:matt@thefinediamond.com"
+                    className="text-muted hover:text-gold transition-colors duration-500"
+                    style={{ fontFamily: "var(--font-body), 'Montserrat', sans-serif", fontWeight: 300 }}
+                  >
+                    matt@thefinediamond.com
+                  </a>
+                </div>
+
+                <div>
+                  <span className="text-gold/60 text-[10px] tracking-[0.3em] uppercase block mb-4" style={{ fontFamily: "var(--font-body), 'Montserrat', sans-serif" }}>
+                    Location
+                  </span>
+                  <p className="text-muted" style={{ fontFamily: "var(--font-body), 'Montserrat', sans-serif", fontWeight: 300 }}>
+                    3726 S. Las Vegas Blvd.<br />
+                    Las Vegas, NV 89158
+                  </p>
+                </div>
+
+                <div className="border border-navy/5 p-8">
+                  <span className="text-gold/60 text-[10px] tracking-[0.3em] uppercase block mb-4" style={{ fontFamily: "var(--font-body), 'Montserrat', sans-serif" }}>
                     Private Viewing
                   </span>
-                  <h3 className="font-heading text-white text-xl mb-3">
+                  <h3 className="text-navy text-xl mb-3" style={{ fontFamily: "var(--font-display), 'Cormorant Garamond', Georgia, serif" }}>
                     Schedule a Visit
                   </h3>
-                  <p className="text-white/25 text-sm mb-6 font-light leading-relaxed">
+                  <p className="text-muted text-sm mb-6 leading-relaxed" style={{ fontFamily: "var(--font-body), 'Montserrat', sans-serif", fontWeight: 300 }}>
                     Experience our collection in person. Private consultations
-                    available for serious inquiries.
+                    available by appointment.
                   </p>
                   <a
-                    href="tel:+12055551234"
-                    className="inline-block border border-gold/30 text-gold/70 px-6 py-3 text-[10px] tracking-[0.2em] uppercase hover:bg-gold hover:text-black transition-all duration-700"
+                    href="tel:+17862301333"
+                    className="btn-gold-shimmer inline-block border border-gold text-gold px-6 py-3 text-[10px] tracking-[0.2em] uppercase hover:bg-gold hover:text-white transition-all duration-700"
+                    style={{ fontFamily: "var(--font-body), 'Montserrat', sans-serif" }}
                   >
                     Call to Schedule
                   </a>

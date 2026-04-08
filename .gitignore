@@ -33,6 +33,13 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
+# large video files
+public/video/*.MOV
+public/video/*.mp4
+
+# test files
+test-email.js
+
 # vercel
 .vercel
 
