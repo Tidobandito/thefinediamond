@@ -120,75 +120,33 @@ const heroParticles = [
 
 const featuredStones = [
   {
+    src: "featured-ring.png",
+    name: "Information upon request",
+    status: "Available" as const,
+  },
+  {
     src: "IMG_0247.JPG",
-    name: "Oval Brilliant Diamond",
-    shape: "Oval",
-    carat: "3.21 ct",
-    color: "D",
-    clarity: "VVS1",
-    cut: "Excellent",
-    certified: "GIA",
-    price: "$62,500",
+    name: "Information upon request",
     status: "Available" as const,
   },
   {
     src: "IMG_0804.JPG",
-    name: "Pear Shape Diamond",
-    shape: "Pear",
-    carat: "2.54 ct",
-    color: "E",
-    clarity: "VS1",
-    cut: "Very Good",
-    certified: "GIA",
-    price: "$41,800",
+    name: "Information upon request",
     status: "Available" as const,
   },
   {
     src: "IMG_1454.JPG",
-    name: "Ceylon Blue Sapphire",
-    shape: "Cushion",
-    carat: "5.87 ct",
-    color: "Vivid Blue",
-    clarity: "Eye Clean",
-    cut: "Excellent",
-    certified: "GRS",
-    price: "$89,000",
-    status: "Currently Reserved" as const,
+    name: "Information upon request",
+    status: "Available" as const,
   },
   {
     src: "IMG_2357.JPG",
-    name: "Colombian Emerald",
-    shape: "Emerald",
-    carat: "4.12 ct",
-    color: "Vivid Green",
-    clarity: "Minor Oil",
-    cut: "Very Good",
-    certified: "Gubelin",
-    price: "$73,200",
+    name: "Information upon request",
     status: "Available" as const,
   },
   {
     src: "IMG_2608.JPG",
-    name: "Pigeon Blood Ruby",
-    shape: "Oval",
-    carat: "3.06 ct",
-    color: "Pigeon Blood",
-    clarity: "Eye Clean",
-    cut: "Excellent",
-    certified: "GRS",
-    price: "$128,000",
-    status: "Currently Reserved" as const,
-  },
-  {
-    src: "IMG_5043.JPG",
-    name: "Fancy Yellow Diamond",
-    shape: "Radiant",
-    carat: "4.50 ct",
-    color: "Fancy Vivid",
-    clarity: "VS2",
-    cut: "Excellent",
-    certified: "GIA",
-    price: "$95,000",
+    name: "Information upon request",
     status: "Available" as const,
   },
 ];
@@ -226,15 +184,22 @@ export default function HomePage() {
 
       {/* ═══════════════════ VALUES ═══════════════════ */}
       <ValuesSection />
+      <div className="section-divider" />
 
       {/* ═══════════════════ SELECTED STONES ═══════════════════ */}
       <SelectedStonesSection />
+      <div className="section-divider" />
 
       {/* ═══════════════════ THE ATELIER ═══════════════════ */}
       <AtelierSection />
 
       {/* ═══════════════════ OUR ORIGIN ═══════════════════ */}
       <OriginSection />
+      <div className="section-divider" />
+
+      {/* ═══════════════════ BEHIND THE CRAFT ═══════════════════ */}
+      <BehindTheCraftSection />
+      <div className="section-divider" />
 
       {/* ═══════════════════ CLIENT STORIES ═══════════════════ */}
       <TestimonialsSection />
@@ -426,7 +391,7 @@ function HeroSection() {
 
 function ValuesSection() {
   return (
-    <section className="py-32 bg-white">
+    <section className="py-32 bg-cream">
       <div className="max-w-[1400px] mx-auto px-8 lg:px-12">
         <motion.div
           initial="hidden"
@@ -444,7 +409,7 @@ function ValuesSection() {
           <motion.h2
             variants={fadeUp}
             custom={1}
-            className="text-navy text-4xl md:text-5xl tracking-tight mb-6"
+            className="text-charcoal text-4xl md:text-5xl tracking-tight mb-6"
             style={{
               fontFamily:
                 "var(--font-display), 'Cormorant Garamond', Georgia, serif",
@@ -530,7 +495,7 @@ function ValuesSection() {
 
 function SelectedStonesSection() {
   return (
-    <section className="py-32 bg-white">
+    <section className="py-32 bg-ivory">
       <div className="max-w-[1400px] mx-auto px-8 lg:px-12">
         <motion.div
           initial="hidden"
@@ -551,7 +516,7 @@ function SelectedStonesSection() {
           <motion.h2
             variants={fadeUp}
             custom={1}
-            className="text-navy text-4xl md:text-5xl lg:text-6xl tracking-tight mb-6"
+            className="text-charcoal text-4xl md:text-5xl lg:text-6xl tracking-tight mb-6"
             style={{
               fontFamily:
                 "var(--font-display), 'Cormorant Garamond', Georgia, serif",
@@ -605,7 +570,7 @@ function SelectedStonesSection() {
               }}
             >
               <TiltCard>
-                <div className="group relative overflow-hidden bg-white border border-navy/5 hover:border-gold/30 transition-all duration-500">
+                <div className="group relative overflow-hidden bg-cream border border-gold/10 hover:border-gold/30 transition-all duration-500">
                   {/* Image */}
                   <div
                     className="relative overflow-hidden"
@@ -613,135 +578,45 @@ function SelectedStonesSection() {
                   >
                     <Image
                       src={`/images/gallery/${stone.src}`}
-                      alt={stone.name}
+                      alt="Fine gemstone piece"
                       fill
                       className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     />
                     {/* Overlay gradient */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  </div>
 
-                    {/* Shape badge */}
-                    <span
-                      className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1.5 text-[9px] tracking-[0.2em] uppercase text-navy"
+                  {/* Info panel */}
+                  <div className="p-5">
+                    <p
+                      className="text-charcoal text-sm italic mb-3"
                       style={{
                         fontFamily:
                           "var(--font-body), 'Montserrat', sans-serif",
+                        fontWeight: 300,
                       }}
                     >
-                      {stone.shape}
-                    </span>
+                      Information upon request
+                    </p>
 
-                    {/* Certification badge */}
-                    <span
-                      className="absolute top-4 right-4 bg-gold/90 backdrop-blur-sm px-3 py-1.5 text-[9px] tracking-[0.2em] uppercase text-white"
-                      style={{
-                        fontFamily:
-                          "var(--font-body), 'Montserrat', sans-serif",
-                      }}
+                    <motion.div
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 20 }}
+                      className="inline-block"
                     >
-                      {stone.certified}
-                    </span>
-
-                    {/* Status badge */}
-                    {stone.status === "Currently Reserved" && (
-                      <span
-                        className="absolute bottom-4 left-4 bg-black/70 backdrop-blur-sm px-3 py-1.5 text-[9px] tracking-[0.15em] uppercase text-amber-300"
+                      <Link
+                        href="/contact"
+                        className="btn-gold-shimmer text-[9px] tracking-[0.2em] uppercase border border-gold text-gold hover:bg-gold hover:text-white px-4 py-2 transition-all duration-500 inline-block"
                         style={{
                           fontFamily:
                             "var(--font-body), 'Montserrat', sans-serif",
                         }}
                       >
-                        Reserved
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Info panel */}
-                  <div className="p-5">
-                    <h3
-                      className="text-navy text-base mb-1"
-                      style={{
-                        fontFamily:
-                          "var(--font-display), 'Cormorant Garamond', Georgia, serif",
-                        fontSize: "18px",
-                      }}
-                    >
-                      {stone.name}
-                    </h3>
-                    <p
-                      className="text-gold text-sm mb-3"
-                      style={{
-                        fontFamily:
-                          "var(--font-body), 'Montserrat', sans-serif",
-                        fontWeight: 400,
-                      }}
-                    >
-                      {stone.carat}
-                    </p>
-
-                    {/* Specs row */}
-                    <div className="flex gap-3 mb-4 flex-wrap">
-                      {[
-                        { label: "Color", value: stone.color },
-                        { label: "Clarity", value: stone.clarity },
-                        { label: "Cut", value: stone.cut },
-                      ].map((spec) => (
-                        <div
-                          key={spec.label}
-                          className="text-center px-2 py-1 border border-navy/5 flex-1 min-w-0"
-                        >
-                          <span
-                            className="block text-[8px] tracking-[0.2em] uppercase text-muted/60 mb-0.5"
-                            style={{
-                              fontFamily:
-                                "var(--font-body), 'Montserrat', sans-serif",
-                            }}
-                          >
-                            {spec.label}
-                          </span>
-                          <span
-                            className="block text-navy text-[11px] font-medium truncate"
-                            style={{
-                              fontFamily:
-                                "var(--font-body), 'Montserrat', sans-serif",
-                            }}
-                          >
-                            {spec.value}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Price and CTA */}
-                    <div className="flex items-center justify-between">
-                      <span
-                        className="text-navy text-lg"
-                        style={{
-                          fontFamily:
-                            "var(--font-display), 'Cormorant Garamond', Georgia, serif",
-                        }}
-                      >
-                        {stone.price}
-                      </span>
-                      <motion.div
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        transition={{ type: "spring", stiffness: 400, damping: 20 }}
-                        className="inline-block"
-                      >
-                        <Link
-                          href={`/contact?stone=${encodeURIComponent(stone.name)}`}
-                          className="btn-gold-shimmer text-[9px] tracking-[0.2em] uppercase border border-gold text-gold hover:bg-gold hover:text-white px-4 py-2 transition-all duration-500 inline-block"
-                          style={{
-                            fontFamily:
-                              "var(--font-body), 'Montserrat', sans-serif",
-                          }}
-                        >
-                          Inquire
-                        </Link>
-                      </motion.div>
-                    </div>
+                        Inquire
+                      </Link>
+                    </motion.div>
                   </div>
                 </div>
               </TiltCard>
@@ -1086,12 +961,102 @@ function OriginSection() {
 }
 
 /* ═══════════════════════════════════════════════════════════════
+   BEHIND THE CRAFT — Video clips section
+═══════════════════════════════════════════════════════════════ */
+
+function BehindTheCraftSection() {
+  const craftVideos = [
+    { src: "/video/craft-1.mp4", label: "The Art of Selection" },
+    { src: "/video/craft-2.mp4", label: "Precision & Detail" },
+  ];
+
+  return (
+    <section className="py-32 bg-champagne">
+      <div className="max-w-[1400px] mx-auto px-8 lg:px-12">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          className="text-center max-w-3xl mx-auto mb-20"
+        >
+          <motion.span
+            variants={fadeUp}
+            custom={0}
+            className="text-gold/60 text-[11px] tracking-[0.5em] uppercase block mb-6"
+            style={{
+              fontFamily: "var(--font-body), 'Montserrat', sans-serif",
+            }}
+          >
+            Up Close
+          </motion.span>
+          <motion.h2
+            variants={fadeUp}
+            custom={1}
+            className="text-charcoal text-4xl md:text-5xl tracking-tight mb-6"
+            style={{
+              fontFamily:
+                "var(--font-display), 'Cormorant Garamond', Georgia, serif",
+            }}
+          >
+            Behind the Craft
+          </motion.h2>
+          <motion.p
+            variants={fadeUp}
+            custom={2}
+            className="text-muted text-base leading-relaxed"
+            style={{
+              fontFamily: "var(--font-body), 'Montserrat', sans-serif",
+              fontWeight: 300,
+            }}
+          >
+            An intimate look at the stones and the process that brings them to life.
+          </motion.p>
+        </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {craftVideos.map((vid, i) => (
+            <motion.div
+              key={vid.src}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: i * 0.15, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
+              className="relative overflow-hidden border border-gold/10 bg-cream group"
+            >
+              <video
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="w-full aspect-video object-cover"
+              >
+                <source src={vid.src} type="video/mp4" />
+              </video>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
+              <p
+                className="absolute bottom-4 left-5 text-white/80 text-sm tracking-wide"
+                style={{
+                  fontFamily: "var(--font-body), 'Montserrat', sans-serif",
+                  fontWeight: 300,
+                }}
+              >
+                {vid.label}
+              </p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════
    TESTIMONIALS — Client stories with elegant cards
 ═══════════════════════════════════════════════════════════════ */
 
 function TestimonialsSection() {
   return (
-    <section className="py-32 bg-white">
+    <section className="py-32 bg-cream">
       <div className="max-w-[1400px] mx-auto px-8 lg:px-12">
         <motion.div
           initial="hidden"
@@ -1303,7 +1268,7 @@ function NewsletterSection() {
 
 function ContactSection() {
   return (
-    <section id="contact" className="py-32 bg-white">
+    <section id="contact" className="py-32 bg-ivory">
       <div className="max-w-3xl mx-auto px-8 lg:px-12">
         <motion.div
           initial="hidden"
@@ -1404,10 +1369,19 @@ function InquiryForm() {
 
     setStatus("submitting");
     try {
-      const res = await fetch("/api/contact", {
+      const res = await fetch("https://formspree.io/matt@thefinediamond.com", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify({
+          name: formData.name,
+          phone: formData.phone,
+          email: formData.email,
+          _replyto: formData.email,
+          stoneInterest: formData.stoneInterest,
+          budgetRange: formData.budgetRange || "Not specified",
+          message: formData.message || "(none)",
+          _subject: `New Inquiry — ${formData.stoneInterest} — ${formData.name}`,
+        }),
       });
       if (res.ok) {
         setStatus("success");
@@ -1428,7 +1402,7 @@ function InquiryForm() {
       >
         <div className="w-16 h-[1px] bg-gold mx-auto mb-8" />
         <h3
-          className="text-navy text-3xl mb-4"
+          className="text-charcoal text-3xl mb-4"
           style={{
             fontFamily:
               "var(--font-display), 'Cormorant Garamond', Georgia, serif",

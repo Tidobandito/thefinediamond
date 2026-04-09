@@ -17,9 +17,9 @@ const fadeUp = {
 
 export default function DiamondsPage() {
   return (
-    <main className="bg-white min-h-screen">
+    <main className="bg-cream min-h-screen">
       {/* Hero */}
-      <section className="pt-32 pb-16 bg-white">
+      <section className="pt-32 pb-16 bg-cream">
         <div className="max-w-[1400px] mx-auto px-8 lg:px-12 text-center">
           <motion.div
             initial={{ width: 0 }}
@@ -50,7 +50,7 @@ export default function DiamondsPage() {
               delay: 0.7,
               ease: [0.22, 1, 0.36, 1],
             }}
-            className="text-navy text-5xl md:text-6xl tracking-tight mb-6"
+            className="text-charcoal text-5xl md:text-6xl tracking-tight mb-6"
             style={{
               fontFamily:
                 "var(--font-display), 'Cormorant Garamond', Georgia, serif",
@@ -94,13 +94,13 @@ export default function DiamondsPage() {
       </section>
 
       {/* JewelerShowcase Search Engine Embed */}
-      <section className="pb-16 bg-white">
+      <section className="pb-16 bg-cream">
         <div className="max-w-[1400px] mx-auto px-4 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 1.2 }}
-            className="w-full border border-navy/5 overflow-hidden"
+            className="w-full border border-charcoal/5 overflow-hidden"
           >
             <iframe
               src="https://thefinediamond-frame.jewelershowcase.com"
@@ -117,7 +117,7 @@ export default function DiamondsPage() {
       </section>
 
       {/* Bottom CTA */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-cream">
         <div className="max-w-3xl mx-auto px-8 text-center">
           <motion.div
             initial="hidden"
@@ -132,7 +132,7 @@ export default function DiamondsPage() {
             <motion.h2
               variants={fadeUp}
               custom={1}
-              className="text-navy text-3xl md:text-4xl tracking-tight mb-4"
+              className="text-charcoal text-3xl md:text-4xl tracking-tight mb-4"
               style={{
                 fontFamily:
                   "var(--font-display), 'Cormorant Garamond', Georgia, serif",

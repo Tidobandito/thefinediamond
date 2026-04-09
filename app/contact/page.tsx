@@ -62,10 +62,19 @@ function ContactForm() {
 
     setStatus("submitting");
     try {
-      const res = await fetch("/api/contact", {
+      const res = await fetch("https://formspree.io/matt@thefinediamond.com", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify({
+          name: formData.name,
+          phone: formData.phone,
+          email: formData.email,
+          _replyto: formData.email,
+          stoneInterest: formData.stoneInterest,
+          budgetRange: formData.budgetRange || "Not specified",
+          message: formData.message || "(none)",
+          _subject: `New Inquiry — ${formData.stoneInterest} — ${formData.name}`,
+        }),
       });
       if (res.ok) {
         setStatus("success");
@@ -81,7 +90,7 @@ function ContactForm() {
     return (
       <div className="text-center py-16">
         <div className="w-16 h-[1px] bg-gold mx-auto mb-8" />
-        <h3 className="text-navy text-3xl mb-4" style={{ fontFamily: "var(--font-display), 'Cormorant Garamond', Georgia, serif" }}>
+        <h3 className="text-charcoal text-3xl mb-4" style={{ fontFamily: "var(--font-display), 'Cormorant Garamond', Georgia, serif" }}>
           Thank You
         </h3>
         <p className="text-muted" style={{ fontFamily: "var(--font-body), 'Montserrat', sans-serif", fontWeight: 300 }}>
@@ -93,8 +102,8 @@ function ContactForm() {
 
   const inputClass = (field: string) =>
     `w-full px-4 py-3 bg-white border ${
-      errors[field] ? "border-red-400" : "border-navy/10"
-    } text-navy text-sm focus:outline-none focus:border-gold transition-colors duration-500`;
+      errors[field] ? "border-red-400" : "border-charcoal/10"
+    } text-charcoal text-sm focus:outline-none focus:border-gold transition-colors duration-500`;
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -245,7 +254,7 @@ export default function ContactPage() {
   return (
     <>
       {/* Hero */}
-      <section className="pt-32 pb-16 bg-white">
+      <section className="pt-32 pb-16 bg-ivory">
         <div className="max-w-[1400px] mx-auto px-8 lg:px-12 text-center">
           <motion.div
             initial={{ width: 0 }}
@@ -266,7 +275,7 @@ export default function ContactPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.7, ease }}
-            className="text-navy text-5xl md:text-6xl tracking-tight mb-6"
+            className="text-charcoal text-5xl md:text-6xl tracking-tight mb-6"
             style={{ fontFamily: "var(--font-display), 'Cormorant Garamond', Georgia, serif" }}
           >
             Begin the <span className="italic text-gold">Conversation</span>
@@ -285,7 +294,7 @@ export default function ContactPage() {
       </section>
 
       {/* Contact Content */}
-      <section className="pb-32 bg-white">
+      <section className="pb-32 bg-ivory">
         <div className="max-w-[1400px] mx-auto px-8 lg:px-12">
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-20">
             {/* Form */}
@@ -295,7 +304,7 @@ export default function ContactPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, ease }}
-                className="border border-navy/5 p-10 md:p-14"
+                className="border border-charcoal/5 p-10 md:p-14"
               >
                 <Suspense fallback={<div className="py-16 text-center text-muted">Loading form...</div>}>
                   <ContactForm />
@@ -318,7 +327,7 @@ export default function ContactPage() {
                   </span>
                   <a
                     href="tel:+17862301333"
-                    className="text-navy text-2xl hover:text-gold transition-colors duration-500"
+                    className="text-charcoal text-2xl hover:text-gold transition-colors duration-500"
                     style={{ fontFamily: "var(--font-display), 'Cormorant Garamond', Georgia, serif" }}
                   >
                     786-230-1333
@@ -348,11 +357,11 @@ export default function ContactPage() {
                   </p>
                 </div>
 
-                <div className="border border-navy/5 p-8">
+                <div className="border border-charcoal/5 p-8">
                   <span className="text-gold/60 text-[10px] tracking-[0.3em] uppercase block mb-4" style={{ fontFamily: "var(--font-body), 'Montserrat', sans-serif" }}>
                     Private Viewing
                   </span>
-                  <h3 className="text-navy text-xl mb-3" style={{ fontFamily: "var(--font-display), 'Cormorant Garamond', Georgia, serif" }}>
+                  <h3 className="text-charcoal text-xl mb-3" style={{ fontFamily: "var(--font-display), 'Cormorant Garamond', Georgia, serif" }}>
                     Schedule a Visit
                   </h3>
                   <p className="text-muted text-sm mb-6 leading-relaxed" style={{ fontFamily: "var(--font-body), 'Montserrat', sans-serif", fontWeight: 300 }}>

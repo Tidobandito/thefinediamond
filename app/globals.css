@@ -2,10 +2,14 @@
 
 @theme inline {
   --color-navy: #1a1a2e;
+  --color-charcoal: #2d2d3a;
   --color-gold: #c9a84c;
   --color-gold-light: #f5eedc;
   --color-muted: #6b6b7a;
   --color-white: #FFFFFF;
+  --color-cream: #faf8f4;
+  --color-ivory: #f5f1eb;
+  --color-champagne: #f0ebe1;
   --font-display: var(--font-display);
   --font-body: var(--font-body);
 }
@@ -15,8 +19,8 @@ html {
 }
 
 body {
-  background-color: #FFFFFF;
-  color: #1a1a2e;
+  background-color: #faf8f4;
+  color: #2d2d3a;
   font-family: var(--font-body), 'Montserrat', sans-serif;
   font-weight: 300;
   -webkit-font-smoothing: antialiased;
@@ -188,6 +192,13 @@ h1, h2, h3, h4, h5, h6 {
 /* Newsletter input focus glow */
 .newsletter-input:focus {
   box-shadow: 0 0 0 2px rgba(201, 168, 76, 0.3);
+}
+
+/* Section divider — soft curved gold line */
+.section-divider {
+  position: relative;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(201,168,76,0.25) 20%, rgba(201,168,76,0.4) 50%, rgba(201,168,76,0.25) 80%, transparent);
 }
 
 /* Testimonial quote mark */

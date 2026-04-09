@@ -19,7 +19,7 @@ export default function AboutPage() {
   return (
     <>
       {/* Hero */}
-      <section className="relative pt-32 pb-24 bg-white overflow-hidden">
+      <section className="relative pt-32 pb-24 bg-ivory overflow-hidden">
         <div className="max-w-[1400px] mx-auto px-8 lg:px-12">
           <div className="max-w-3xl">
             <motion.div
@@ -41,7 +41,7 @@ export default function AboutPage() {
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1.2, delay: 1, ease }}
-              className="text-navy text-4xl md:text-5xl lg:text-6xl tracking-tight mb-6"
+              className="text-charcoal text-4xl md:text-5xl lg:text-6xl tracking-tight mb-6"
               style={{ fontFamily: "var(--font-display), 'Cormorant Garamond', Georgia, serif" }}
             >
               A Private Practice in
@@ -65,7 +65,7 @@ export default function AboutPage() {
       </section>
 
       {/* The Approach */}
-      <section className="py-32 bg-white">
+      <section className="py-32 bg-ivory">
         <div className="max-w-[1400px] mx-auto px-8 lg:px-12">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
             <motion.div
@@ -102,7 +102,7 @@ export default function AboutPage() {
               <motion.h2
                 variants={fadeUp}
                 custom={1}
-                className="text-navy text-4xl md:text-5xl tracking-tight leading-[1.1] mb-8"
+                className="text-charcoal text-4xl md:text-5xl tracking-tight leading-[1.1] mb-8"
                 style={{ fontFamily: "var(--font-display), 'Cormorant Garamond', Georgia, serif" }}
               >
                 Personally Sourced,
@@ -150,7 +150,7 @@ export default function AboutPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-32 bg-white">
+      <section className="py-32 bg-ivory">
         <div className="max-w-[1400px] mx-auto px-8 lg:px-12">
           <motion.div
             initial="hidden"
@@ -166,7 +166,7 @@ export default function AboutPage() {
             <motion.h2
               variants={fadeUp}
               custom={1}
-              className="text-navy text-4xl md:text-5xl lg:text-6xl tracking-tight mb-6"
+              className="text-charcoal text-4xl md:text-5xl lg:text-6xl tracking-tight mb-6"
               style={{ fontFamily: "var(--font-display), 'Cormorant Garamond', Georgia, serif" }}
             >
               Experience the Collection

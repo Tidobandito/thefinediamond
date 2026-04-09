@@ -45,7 +45,7 @@ export default function CustomDesignPage() {
   return (
     <>
       {/* Hero */}
-      <section className="pt-32 pb-24 bg-white">
+      <section className="pt-32 pb-24 bg-cream">
         <div className="max-w-[1400px] mx-auto px-8 lg:px-12">
           <div className="max-w-2xl">
             <motion.div
@@ -67,7 +67,7 @@ export default function CustomDesignPage() {
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1.2, delay: 0.3, ease }}
-              className="text-navy text-4xl md:text-5xl lg:text-6xl tracking-tight leading-[1.1] mb-8"
+              className="text-charcoal text-4xl md:text-5xl lg:text-6xl tracking-tight leading-[1.1] mb-8"
               style={{ fontFamily: "var(--font-display), 'Cormorant Garamond', Georgia, serif" }}
             >
               Your Vision,
@@ -101,7 +101,7 @@ export default function CustomDesignPage() {
               </Link>
               <a
                 href="#how-it-works"
-                className="inline-block px-10 py-4 text-[11px] tracking-[0.2em] uppercase border border-navy/15 text-muted hover:border-gold hover:text-gold transition-all duration-300"
+                className="inline-block px-10 py-4 text-[11px] tracking-[0.2em] uppercase border border-charcoal/15 text-muted hover:border-gold hover:text-gold transition-all duration-300"
                 style={{ fontFamily: "var(--font-body), 'Montserrat', sans-serif", fontWeight: 300 }}
               >
                 See the Process
@@ -112,7 +112,7 @@ export default function CustomDesignPage() {
       </section>
 
       {/* How It Works */}
-      <section id="how-it-works" className="py-32 bg-white">
+      <section id="how-it-works" className="py-32 bg-cream">
         <div className="max-w-[1400px] mx-auto px-8 lg:px-12">
           <motion.div
             initial="hidden"
@@ -131,7 +131,7 @@ export default function CustomDesignPage() {
             <motion.h2
               variants={fadeUp}
               custom={1}
-              className="text-navy text-4xl md:text-5xl lg:text-6xl tracking-tight mb-6"
+              className="text-charcoal text-4xl md:text-5xl lg:text-6xl tracking-tight mb-6"
               style={{ fontFamily: "var(--font-display), 'Cormorant Garamond', Georgia, serif" }}
             >
               How It Works
@@ -169,7 +169,7 @@ export default function CustomDesignPage() {
                 }`}
               >
                 <div className="absolute left-8 md:left-1/2 -translate-x-1/2 z-10">
-                  <div className="w-16 h-16 rounded-full border border-gold/30 bg-white flex items-center justify-center">
+                  <div className="w-16 h-16 rounded-full border border-gold/30 bg-ivory flex items-center justify-center">
                     <span className="text-gold text-lg tracking-wider" style={{ fontFamily: "var(--font-display), 'Cormorant Garamond', Georgia, serif" }}>
                       {step.numeral}
                     </span>
@@ -187,7 +187,7 @@ export default function CustomDesignPage() {
                     Step {step.numeral}
                   </p>
                   <h3
-                    className="text-navy text-2xl md:text-3xl tracking-tight mb-4"
+                    className="text-charcoal text-2xl md:text-3xl tracking-tight mb-4"
                     style={{ fontFamily: "var(--font-display), 'Cormorant Garamond', Georgia, serif" }}
                   >
                     {step.title}
@@ -203,7 +203,7 @@ export default function CustomDesignPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-32 bg-white">
+      <section className="py-32 bg-cream">
         <div className="relative z-10 max-w-[900px] mx-auto px-8 lg:px-12 text-center">
           <motion.div
             initial="hidden"
@@ -218,7 +218,7 @@ export default function CustomDesignPage() {
             <motion.h2
               variants={fadeUp}
               custom={1}
-              className="text-navy text-4xl md:text-5xl lg:text-6xl tracking-tight mb-6"
+              className="text-charcoal text-4xl md:text-5xl lg:text-6xl tracking-tight mb-6"
               style={{ fontFamily: "var(--font-display), 'Cormorant Garamond', Georgia, serif" }}
             >
               Ready to Create Something

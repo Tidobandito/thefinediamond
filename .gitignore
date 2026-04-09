@@ -33,9 +33,10 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
-# large video files
+# large original video files (keep small web-optimized mp4s)
 public/video/*.MOV
-public/video/*.mp4
+public/video/0439dba58865459c904ec22ea3426900.mp4
+public/video/ScreenRecording*
 
 # test files
 test-email.js
