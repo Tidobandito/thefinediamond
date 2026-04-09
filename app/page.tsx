@@ -464,7 +464,7 @@ function ValuesSection() {
                 className="text-gold/30 text-6xl font-light tracking-wider block mb-6"
               />
               <h3
-                className="text-navy text-2xl mb-4 group-hover:text-gold transition-colors duration-700"
+                className="text-charcoal text-2xl mb-4 group-hover:text-gold transition-colors duration-700"
                 style={{
                   fontFamily:
                     "var(--font-display), 'Cormorant Garamond', Georgia, serif",
@@ -1077,7 +1077,7 @@ function TestimonialsSection() {
           <motion.h2
             variants={fadeUp}
             custom={1}
-            className="text-navy text-4xl md:text-5xl tracking-tight"
+            className="text-charcoal text-4xl md:text-5xl tracking-tight"
             style={{
               fontFamily:
                 "var(--font-display), 'Cormorant Garamond', Georgia, serif",
@@ -1100,13 +1100,13 @@ function TestimonialsSection() {
                 ease: [0.22, 1, 0.36, 1],
               }}
               style={{ perspective: 800 }}
-              className="relative p-8 lg:p-10 border border-navy/5 hover:border-gold/20 transition-all duration-700 group"
+              className="relative p-8 lg:p-10 border border-charcoal/5 hover:border-gold/20 transition-all duration-700 group"
             >
               {/* Quote mark */}
               <span className="quote-mark">&ldquo;</span>
 
               <p
-                className="relative text-navy/80 text-sm leading-relaxed mb-8 pt-8"
+                className="relative text-charcoal/80 text-sm leading-relaxed mb-8 pt-8"
                 style={{
                   fontFamily: "var(--font-body), 'Montserrat', sans-serif",
                   fontWeight: 300,
@@ -1118,7 +1118,7 @@ function TestimonialsSection() {
               <div className="w-8 h-[1px] bg-gold/30 mb-4 group-hover:w-12 transition-all duration-500" />
 
               <p
-                className="text-navy text-sm mb-1"
+                className="text-charcoal text-sm mb-1"
                 style={{
                   fontFamily:
                     "var(--font-display), 'Cormorant Garamond', Georgia, serif",
@@ -1284,7 +1284,7 @@ function ContactSection() {
           <motion.h2
             variants={fadeUp}
             custom={1}
-            className="text-navy text-4xl md:text-5xl tracking-tight mb-4"
+            className="text-charcoal text-4xl md:text-5xl tracking-tight mb-4"
             style={{
               fontFamily:
                 "var(--font-display), 'Cormorant Garamond', Georgia, serif",
@@ -1425,8 +1425,8 @@ function InquiryForm() {
 
   const inputClass = (field: string) =>
     `w-full px-4 py-3 bg-white border ${
-      errors[field] ? "border-red-400" : "border-navy/10"
-    } text-navy text-sm focus:outline-none focus:border-gold transition-colors duration-500`;
+      errors[field] ? "border-red-400" : "border-charcoal/10"
+    } text-charcoal text-sm focus:outline-none focus:border-gold transition-colors duration-500`;
 
   return (
     <motion.form

@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <section className="min-h-screen flex items-center justify-center bg-white relative overflow-hidden">
+    <section className="min-h-screen flex items-center justify-center bg-cream relative overflow-hidden">
       <div className="text-center px-8 relative z-10">
         <div className="w-12 h-[1px] bg-gold mx-auto mb-8" />
 
@@ -11,7 +11,7 @@ export default function NotFound() {
         </p>
 
         <h1
-          className="text-navy/[0.06] text-[12rem] md:text-[16rem] leading-none tracking-tight mb-8"
+          className="text-charcoal/[0.06] text-[12rem] md:text-[16rem] leading-none tracking-tight mb-8"
           style={{ fontFamily: "var(--font-display), 'Cormorant Garamond', Georgia, serif" }}
         >
           404
@@ -32,7 +32,7 @@ export default function NotFound() {
           </Link>
           <Link
             href="/gallery"
-            className="border border-navy/10 text-muted px-10 py-4 text-[11px] tracking-[0.25em] uppercase hover:border-gold hover:text-gold transition-all duration-700"
+            className="border border-charcoal/10 text-muted px-10 py-4 text-[11px] tracking-[0.25em] uppercase hover:border-gold hover:text-gold transition-all duration-700"
             style={{ fontFamily: "var(--font-body), 'Montserrat', sans-serif", fontWeight: 300 }}
           >
             View Gallery

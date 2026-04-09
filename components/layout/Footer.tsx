@@ -66,7 +66,7 @@ export default function Footer() {
             </p>
             <Link
               href="/contact"
-              className="btn-gold-shimmer inline-block border border-gold/40 text-gold px-6 py-3 text-[10px] tracking-[0.2em] uppercase hover:bg-gold hover:text-navy transition-all duration-700"
+              className="btn-gold-shimmer inline-block border border-gold/40 text-gold px-6 py-3 text-[10px] tracking-[0.2em] uppercase hover:bg-gold hover:text-white transition-all duration-700"
               style={{ fontFamily: "var(--font-body), 'Montserrat', sans-serif" }}
             >
               Send Inquiry
@@ -79,7 +79,7 @@ export default function Footer() {
       <div className="border-t border-white/10">
         <div className="max-w-[1400px] mx-auto px-8 lg:px-12 py-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-white/30 text-[10px] tracking-[0.2em]" style={{ fontFamily: "var(--font-body), 'Montserrat', sans-serif", fontWeight: 300 }}>
-            &copy; 2025 The Fine Diamond. All rights reserved.
+            &copy; 2026 The Fine Diamond. All rights reserved.
           </p>
           <p className="text-white/20 text-[10px] tracking-[0.2em]" style={{ fontFamily: "var(--font-body), 'Montserrat', sans-serif", fontWeight: 300 }}>
             Private inquiries by appointment.

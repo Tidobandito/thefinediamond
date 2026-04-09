@@ -48,7 +48,7 @@ export default function Navigation() {
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
             <Link href="/" className="flex-shrink-0 group">
-              <span className="font-[var(--font-display)] text-[20px] tracking-[0.35em] text-navy group-hover:text-gold transition-colors duration-500 uppercase" style={{ fontFamily: "var(--font-display), 'Cormorant Garamond', Georgia, serif" }}>
+              <span className="font-[var(--font-display)] text-[20px] tracking-[0.35em] text-charcoal group-hover:text-gold transition-colors duration-500 uppercase" style={{ fontFamily: "var(--font-display), 'Cormorant Garamond', Georgia, serif" }}>
                 THE FINE DIAMOND
               </span>
             </Link>
@@ -63,7 +63,7 @@ export default function Navigation() {
                 >
                   <Link
                     href={link.href}
-                    className="relative text-muted hover:text-navy text-[11px] tracking-[0.25em] uppercase transition-colors duration-500 py-2 group"
+                    className="relative text-muted hover:text-charcoal text-[11px] tracking-[0.25em] uppercase transition-colors duration-500 py-2 group"
                   >
                     {link.label}
                     <span className="absolute bottom-0 left-0 w-0 h-px bg-gold group-hover:w-full transition-all duration-500" />
@@ -76,7 +76,7 @@ export default function Navigation() {
             <div className="hidden lg:flex items-center gap-8">
               <a
                 href="tel:+17862301333"
-                className="text-muted hover:text-navy text-[11px] tracking-[0.15em] transition-colors duration-500"
+                className="text-muted hover:text-charcoal text-[11px] tracking-[0.15em] transition-colors duration-500"
               >
                 786-230-1333
               </a>
@@ -91,21 +91,21 @@ export default function Navigation() {
             {/* Mobile hamburger */}
             <button
               onClick={() => setIsMobileOpen(!isMobileOpen)}
-              className="lg:hidden text-navy p-3"
+              className="lg:hidden text-charcoal p-3"
               aria-label={isMobileOpen ? "Close menu" : "Open menu"}
             >
               <div className="w-7 h-5 relative flex flex-col justify-between">
                 <motion.span
                   animate={isMobileOpen ? { rotate: 45, y: 8 } : { rotate: 0, y: 0 }}
-                  className="w-full h-[1px] bg-navy origin-left"
+                  className="w-full h-[1px] bg-charcoal origin-left"
                 />
                 <motion.span
                   animate={isMobileOpen ? { opacity: 0, x: -20 } : { opacity: 1, x: 0 }}
-                  className="w-full h-[1px] bg-navy"
+                  className="w-full h-[1px] bg-charcoal"
                 />
                 <motion.span
                   animate={isMobileOpen ? { rotate: -45, y: -8 } : { rotate: 0, y: 0 }}
-                  className="w-full h-[1px] bg-navy origin-left"
+                  className="w-full h-[1px] bg-charcoal origin-left"
                 />
               </div>
             </button>
@@ -134,7 +134,7 @@ export default function Navigation() {
                   <Link
                     href={link.href}
                     onClick={() => setIsMobileOpen(false)}
-                    className="text-navy text-4xl tracking-[0.15em] hover:text-gold transition-colors duration-500"
+                    className="text-charcoal text-4xl tracking-[0.15em] hover:text-gold transition-colors duration-500"
                     style={{ fontFamily: "var(--font-display), 'Cormorant Garamond', Georgia, serif" }}
                   >
                     {link.label}
@@ -149,7 +149,7 @@ export default function Navigation() {
                 <Link
                   href="/contact"
                   onClick={() => setIsMobileOpen(false)}
-                  className="text-navy text-4xl tracking-[0.15em] hover:text-gold transition-colors duration-500"
+                  className="text-charcoal text-4xl tracking-[0.15em] hover:text-gold transition-colors duration-500"
                   style={{ fontFamily: "var(--font-display), 'Cormorant Garamond', Georgia, serif" }}
                 >
                   Contact
