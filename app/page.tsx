@@ -391,8 +391,21 @@ function HeroSection() {
 
 function ValuesSection() {
   return (
-    <section className="py-32 bg-cream">
-      <div className="max-w-[1400px] mx-auto px-8 lg:px-12">
+    <section className="relative py-32 overflow-hidden">
+      {/* Background video — the original hero footage */}
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover"
+      >
+        <source src="/video/values-bg.mp4" type="video/mp4" />
+      </video>
+      {/* Cream overlay for text legibility */}
+      <div className="absolute inset-0 bg-cream/85" />
+
+      <div className="relative max-w-[1400px] mx-auto px-8 lg:px-12">
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -822,6 +835,27 @@ function AtelierSection() {
               Start Your Design
             </Link>
           </motion.div>
+        </motion.div>
+
+        {/* Bespoke process showcase video */}
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-20 max-w-2xl mx-auto"
+        >
+          <div className="relative rounded-sm overflow-hidden border border-gold/20">
+            <video
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="w-full h-auto"
+            >
+              <source src="/video/bespoke-process.mp4" type="video/mp4" />
+            </video>
+          </div>
         </motion.div>
       </div>
     </section>
