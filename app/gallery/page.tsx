@@ -7,46 +7,47 @@ import TiltCard from "@/components/ui/TiltCard";
 
 interface GalleryStone {
   src: string;
+  alt: string;
 }
 
 // Gallery images — featured ring first
 const galleryStones: GalleryStone[] = [
-  { src: "featured-ring.png" },
-  { src: "IMG_0205.JPG" },
-  { src: "IMG_0247.JPG" },
-  { src: "IMG_0334.JPG" },
-  { src: "IMG_0447.JPG" },
-  { src: "IMG_0804.JPG" },
-  { src: "IMG_1078.JPG" },
-  { src: "IMG_1130.JPG" },
-  { src: "IMG_1454.JPG" },
-  { src: "IMG_1475.JPG" },
-  { src: "IMG_2084.JPG" },
-  { src: "IMG_2357.JPG" },
-  { src: "IMG_2358.JPG" },
-  { src: "IMG_2399.JPG" },
-  { src: "IMG_2409.JPG" },
-  { src: "IMG_2480.JPG" },
-  { src: "IMG_2608.JPG" },
-  { src: "IMG_2662.JPG" },
-  { src: "IMG_2726.JPG" },
-  { src: "IMG_3883.JPG" },
-  { src: "IMG_4114.JPG" },
-  { src: "IMG_4129.JPG" },
-  { src: "IMG_5043.JPG" },
-  { src: "IMG_5086.JPG" },
-  { src: "IMG_5926.JPG" },
-  { src: "IMG_6084.JPG" },
-  { src: "IMG_6362.JPG" },
-  { src: "IMG_8669.JPG" },
-  { src: "IMG_9683.JPG" },
-  { src: "IMG_9753.JPG" },
-  { src: "12F128DA-DD99-4E0A-AFEA-10A61E5B2289.jpg" },
-  { src: "270F9EA1-35A2-41EF-838D-9A703A905996.jpg" },
-  { src: "7305494C-BD86-451C-B5B3-4F69A33F8CFA.jpg" },
-  { src: "7D9E987F-2AC8-433E-A1D9-BED6A59CD945.jpg" },
-  { src: "9790A664-18BC-4121-A424-7BA284F90B3B.jpg" },
-  { src: "CAFA559F-3E88-4469-8689-6C3E6D9F53EF.jpg" },
+  { src: "featured-ring.png", alt: "Custom bespoke diamond ring by The Fine Diamond, Las Vegas" },
+  { src: "IMG_0205.JPG", alt: "Rare gemstone sourced from global cutting house" },
+  { src: "IMG_0247.JPG", alt: "Hand-selected loose diamond available for private viewing" },
+  { src: "IMG_0334.JPG", alt: "Fine colored gemstone from The Fine Diamond collection" },
+  { src: "IMG_0447.JPG", alt: "Investment-grade gemstone available by private inquiry" },
+  { src: "IMG_0804.JPG", alt: "Rare collector stone hand-selected by private dealer" },
+  { src: "IMG_1078.JPG", alt: "Luxury gemstone piece from The Fine Diamond gallery" },
+  { src: "IMG_1130.JPG", alt: "Exceptional loose stone available for custom setting" },
+  { src: "IMG_1454.JPG", alt: "Fine jewelry piece crafted with rare gemstones" },
+  { src: "IMG_1475.JPG", alt: "Precious gemstone from trusted international source" },
+  { src: "IMG_2084.JPG", alt: "Rare stone available for bespoke jewelry commission" },
+  { src: "IMG_2357.JPG", alt: "Hand-selected gemstone from The Fine Diamond, Las Vegas" },
+  { src: "IMG_2358.JPG", alt: "Collector-grade gemstone available by appointment" },
+  { src: "IMG_2399.JPG", alt: "Fine gemstone for custom engagement ring design" },
+  { src: "IMG_2409.JPG", alt: "Luxury loose stone from private dealer collection" },
+  { src: "IMG_2480.JPG", alt: "Exceptional colored gemstone sourced globally" },
+  { src: "IMG_2608.JPG", alt: "Rare gemstone available for private consultation" },
+  { src: "IMG_2662.JPG", alt: "Investment-quality stone from The Fine Diamond" },
+  { src: "IMG_2726.JPG", alt: "Fine jewelry piece with hand-selected gemstone" },
+  { src: "IMG_3883.JPG", alt: "Rare collector stone available in Las Vegas" },
+  { src: "IMG_4114.JPG", alt: "Luxury gemstone from global sourcing network" },
+  { src: "IMG_4129.JPG", alt: "Bespoke jewelry piece from The Fine Diamond" },
+  { src: "IMG_5043.JPG", alt: "Precious stone hand-selected for exceptional quality" },
+  { src: "IMG_5086.JPG", alt: "Fine gemstone available for custom jewelry design" },
+  { src: "IMG_5926.JPG", alt: "Rare stone from trusted cutting house worldwide" },
+  { src: "IMG_6084.JPG", alt: "Luxury collector gemstone by private Las Vegas dealer" },
+  { src: "IMG_6362.JPG", alt: "Exceptional gemstone for bespoke commission" },
+  { src: "IMG_8669.JPG", alt: "Hand-selected rare stone from The Fine Diamond" },
+  { src: "IMG_9683.JPG", alt: "Investment-grade gemstone available by inquiry" },
+  { src: "IMG_9753.JPG", alt: "Fine jewelry crafted with rare collector stone" },
+  { src: "12F128DA-DD99-4E0A-AFEA-10A61E5B2289.jpg", alt: "Precious gemstone from The Fine Diamond gallery" },
+  { src: "270F9EA1-35A2-41EF-838D-9A703A905996.jpg", alt: "Luxury gemstone sourced from international cutting house" },
+  { src: "7305494C-BD86-451C-B5B3-4F69A33F8CFA.jpg", alt: "Rare collector stone available for private viewing" },
+  { src: "7D9E987F-2AC8-433E-A1D9-BED6A59CD945.jpg", alt: "Fine gemstone hand-selected by private dealer" },
+  { src: "9790A664-18BC-4121-A424-7BA284F90B3B.jpg", alt: "Exceptional stone for custom bespoke jewelry" },
+  { src: "CAFA559F-3E88-4469-8689-6C3E6D9F53EF.jpg", alt: "Rare gemstone from The Fine Diamond, Las Vegas" },
 ];
 
 export default function GalleryPage() {
@@ -119,7 +120,7 @@ export default function GalleryPage() {
                     >
                       <Image
                         src={`/images/gallery/${stone.src}`}
-                        alt="Fine gemstone piece"
+                        alt={stone.alt}
                         fill
                         className="object-cover transition-transform duration-700 group-hover:scale-[1.02]"
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"

@@ -45,12 +45,21 @@ export const metadata: Metadata = {
     title: "The Fine Diamond | Private Luxury Gemstone Dealer — Las Vegas",
     description:
       "Private luxury gemstone dealer specializing in rare diamonds, sapphires, emeralds, and collector stones. Bespoke jewelry sourced globally.",
+    images: [
+      {
+        url: "https://www.thefinediamond.com/images/gallery/featured-ring.png",
+        width: 1200,
+        height: 630,
+        alt: "The Fine Diamond — Private Luxury Gemstone Dealer in Las Vegas",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "The Fine Diamond",
     description:
       "Private luxury gemstone dealer specializing in rare diamonds, sapphires, emeralds, and collector stones.",
+    images: ["https://www.thefinediamond.com/images/gallery/featured-ring.png"],
   },
   robots: {
     index: true,
@@ -87,9 +96,63 @@ export default function RootLayout({
                 postalCode: "89158",
                 addressCountry: "US",
               },
+              geo: {
+                "@type": "GeoCoordinates",
+                latitude: 36.1215,
+                longitude: -115.1739,
+              },
+              areaServed: {
+                "@type": "City",
+                name: "Las Vegas",
+              },
               priceRange: "$$$$",
+              openingHoursSpecification: {
+                "@type": "OpeningHoursSpecification",
+                dayOfWeek: [
+                  "Monday",
+                  "Tuesday",
+                  "Wednesday",
+                  "Thursday",
+                  "Friday",
+                  "Saturday",
+                ],
+                description: "By appointment only",
+              },
               description:
                 "Private luxury gemstone dealer specializing in rare diamonds, sapphires, emeralds, and collector stones. Bespoke jewelry sourced globally.",
+              hasOfferCatalog: {
+                "@type": "OfferCatalog",
+                name: "Gemstone & Jewelry Services",
+                itemListElement: [
+                  {
+                    "@type": "Offer",
+                    itemOffered: {
+                      "@type": "Service",
+                      name: "Rare Gemstone Sourcing",
+                      description:
+                        "Direct sourcing of rare diamonds, sapphires, emeralds, rubies, and collector stones from global cutting houses.",
+                    },
+                  },
+                  {
+                    "@type": "Offer",
+                    itemOffered: {
+                      "@type": "Service",
+                      name: "Custom Jewelry Design",
+                      description:
+                        "Bespoke jewelry design with photorealistic 3D CAD renders, from concept to creation.",
+                    },
+                  },
+                  {
+                    "@type": "Offer",
+                    itemOffered: {
+                      "@type": "Service",
+                      name: "Private Consultation",
+                      description:
+                        "One-on-one private gemstone viewing and consultation by appointment in Las Vegas.",
+                    },
+                  },
+                ],
+              },
             }),
           }}
         />

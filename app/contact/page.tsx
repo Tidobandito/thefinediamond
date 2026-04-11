@@ -62,7 +62,7 @@ function ContactForm() {
 
     setStatus("submitting");
     try {
-      const res = await fetch("https://formspree.io/matt@thefinediamond.com", {
+      const res = await fetch("https://formspree.io/f/xnjgpbko", {
         method: "POST",
         headers: { "Content-Type": "application/json", "Accept": "application/json" },
         body: JSON.stringify({
