@@ -316,7 +316,7 @@ function HeroSection() {
           initial={{ opacity: 0, y: 20, filter: "blur(4px)" }}
           animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
           transition={{ duration: 1, delay: 1.9 }}
-          className="text-white/60 text-base md:text-lg max-w-xl mb-10 leading-relaxed"
+          className="text-white/60 text-base md:text-lg max-w-xl leading-relaxed"
           style={{
             fontFamily: "var(--font-body), 'Montserrat', sans-serif",
             fontWeight: 300,
@@ -325,47 +325,6 @@ function HeroSection() {
           Rare, investment-grade gemstones sourced globally.
           Every stone hand-selected. Every piece bespoke.
         </motion.p>
-
-        {/* CTAs with gesture feedback */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 2.2 }}
-          className="flex flex-col sm:flex-row gap-4"
-        >
-          <motion.div
-            whileHover={{ scale: 1.03, boxShadow: "0 0 30px rgba(201,168,76,0.3)" }}
-            whileTap={{ scale: 0.97 }}
-            transition={{ type: "spring", stiffness: 400, damping: 20 }}
-          >
-            <Link
-              href="/gallery"
-              className="btn-gold-shimmer inline-block px-10 py-4 text-[12px] tracking-[0.25em] uppercase bg-gold text-white hover:bg-gold/90 transition-all duration-500 glow-pulse"
-              style={{
-                fontFamily: "var(--font-body), 'Montserrat', sans-serif",
-                fontWeight: 400,
-              }}
-            >
-              Explore the Collection
-            </Link>
-          </motion.div>
-          <motion.div
-            whileHover={{ scale: 1.03, boxShadow: "0 0 20px rgba(255,255,255,0.1)" }}
-            whileTap={{ scale: 0.97 }}
-            transition={{ type: "spring", stiffness: 400, damping: 20 }}
-          >
-            <Link
-              href="/custom-design"
-              className="btn-gold-shimmer inline-block px-10 py-4 text-[12px] tracking-[0.25em] uppercase text-white/85 border border-white/30 hover:border-gold hover:text-gold transition-all duration-500"
-              style={{
-                fontFamily: "var(--font-body), 'Montserrat', sans-serif",
-                fontWeight: 300,
-              }}
-            >
-              Begin Your Commission
-            </Link>
-          </motion.div>
-        </motion.div>
       </div>
 
       {/* Scroll indicator */}
