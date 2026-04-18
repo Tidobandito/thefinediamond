@@ -20,3 +20,12 @@ Once Todd confirms where the original footage lives (iCloud, a local recording, 
 
 - The absolute path or URL to the original source footage
 - Any ffmpeg / editing commands used to produce `hero.mp4` from that source
+
+## Edit history
+
+- **2026-04-18** — `hero.mp4` trimmed from 20.17s to 15.57s to drop the closing Instagram-logo scene. Command used:
+  ```
+  ffmpeg -i hero.mp4 -t 15.5 -c copy -movflags +faststart hero-trimmed.mp4
+  ```
+  Keyframe-aligned (no re-encode). `hero-poster.jpg` regenerated from frame at 07s of the trimmed clip.
+  The per-frame `@THEFINEDIAMONDOFFICIAL` corner watermark is baked into the source footage (Instagram-origin download) and cannot be removed without the original pre-upload file. If you ever obtain the clean source, replace `hero.mp4` wholesale rather than trying to remove the watermark from this derivative.
